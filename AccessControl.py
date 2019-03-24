@@ -32,26 +32,10 @@ def checkAccess(userPrio, roomPrio):
 		print("NEIN Event 0")	# Zugang verweigert
 		return 0
 
-	# Sucht einen Tupel mit Raumdaten und gibt diesen zurueck
-def checkRoom(tagID):
-	Room = sql_interface.readRoom(roomNr)
-	if(Room == 0):
-		return 0
-	else:
-		return Room
-
-	# Sucht einen Tupel mit Nutzerdaten und gibt diesen zurueck
-def checkUser(tagID):
-	User = sql_interface.readUser(tagID)
-	if(User == 0):
-		return 0
-	else:
-		return User
-
 	# Sucht Nutzer und Raumdaten, prueft Berechtigung und oeffnet evtl die Tuer
 def process(tagID):
-	User = checkUser(tagID)
-	Room = checkRoom(roomNr)
+	User = sql_interface.readUser(tagID)
+	Room = sql_interface.readRoom(roomNr)
 	if(User and Room):
 		event = checkAccess(User[6], Room[6])
 	elif(User == 0 and Room):
@@ -78,6 +62,3 @@ def start():
 	while True:
 		scan()
 		time.sleep(1)
-
-	# Starte das Programm
-
