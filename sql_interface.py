@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #	Yannik Seitz 20.03.19
-#	FS2V Tuerzugangs-Projekt 
+#	FS2V Tuerzugangs-Projekt
 #	Diese Datei beinhaltet alle selbst geschriebenen SQL-Funktionen
 
 import MySQLdb
@@ -50,3 +50,10 @@ def writeLog2(event, tagID, roomNr):
 	curser, db = SQLaccess()
 	curser.execute("INSERT INTO Logs (event, tagID, roomNr, date, time) VALUES (%s, %s, %s, CURDATE(), CURRENT_TIME())", (event, tagID, roomNr))
 	db.commit()
+
+	# Setzt openFlag des Raums auf 0
+def resetOpenFlag(roomNr):
+	curser, db = SQLaccess()
+	curser.execute("UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s", (roomNr,))
+        db.commit()
+

@@ -6,6 +6,8 @@ import sql_interface
 import gpio_interface
 import time
 
+roomNr = 420
+
 	# Prueft ob openFlag gesetzt wurde
 def checkManualOpen():
 	Room = sql_interface.readRoom(roomNr)
@@ -13,6 +15,7 @@ def checkManualOpen():
 		if(Room[7] == 1):
 			print("Manual")
 			gpio_interface.openDoor()
+			sql_interface.resetOpenFlag(roomNr)
 
 	# Endlose Schleife mit Pause
 def start():
