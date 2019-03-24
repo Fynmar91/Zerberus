@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #	Yannik Seitz 20.03.19
-#	FS2V Tuerzugangs-Projekt 
+#	FS2V Tuerzugangs-Projekt
 #	Programm wird durch einen Watchdog-Dienst gestartet und verarbeitet einkommende RFID-Oeffnungsanfragen
 #	GPIO- und SQL-Aufgaben sind in zwei andere Dateinen ausgelagert
 #	Raumnummer soll aus einer Config-Datei ausgelesen werden
@@ -11,7 +11,7 @@ import time
 
 roomNr = 420
 
-	# Ruft Logging-Funktion auf 
+	# Ruft Logging-Funktion auf
 def log(event, tagID, User):
 	if(event == 1):		# Zugang erlaubt
 		sql_interface.writeLog1(event, tagID, roomNr, User)
@@ -39,7 +39,7 @@ def checkRoom(tagID):
 		return 0
 	else:
 		return Room
-	
+
 	# Sucht einen Tupel mit Nutzerdaten und gibt diesen zurueck
 def checkUser(tagID):
 	User = sql_interface.readUser(tagID)
@@ -72,19 +72,21 @@ def scan():
 	if(tagID):
 		process(tagID)
 
-	
+
 	# Prueft ob openFlag gesetzt wurde
 def checkManualOpen():
 	Room = checkRoom(roomNr)
 	if(Room):
 		if(Room[7] == 1):
+			print("Manual")
 			gpio_interface.openDoor()
 
+	# Endlose Schleife mit Pause
 def start():
 	while True:
 		scan()
 		checkManualOpen()
-		time.sleep(1) # Endlose Schleife mit Pause
+		time.sleep(1)
 
 	# Starte das Programm
 start()
