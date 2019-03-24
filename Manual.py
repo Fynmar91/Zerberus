@@ -23,4 +23,3 @@ def start():
 		checkManualOpen()
 		time.sleep(1)
 
-start()
