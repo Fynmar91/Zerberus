@@ -1,0 +1,5 @@
+#!/bin/sh
+killall python
+python /home/pi/Zerberus/aWatchdog.py &
+python /home/pi/Zerberus/bWatchdog.py &
+

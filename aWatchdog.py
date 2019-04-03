@@ -26,4 +26,4 @@ try:
 
 except Exception as error:
 	Send("Error", error)
-	#subprocess.call("/home/pi/Zerberus/rebootPi.sh", shell=True)
+	subprocess.call("/home/pi/Zerberus/Restart", shell=True)
