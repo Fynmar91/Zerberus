@@ -5,13 +5,15 @@ import subprocess
 import smtplib
 import ssl
 import Zerberus
+import gpio_interface
 
 def Send(subject, error):
 	port = 465
-	smtp_server = "smtp.gmail.com"
-	sender_email = "zerberus.fs2v@gmail.com"
-	receiver_email = "zerberus.fs2v@gmail.com"
-	password = "rassi123"
+	smtp_server = 'smtp.gmail.com'
+	sender_email = 'zerberus.fs2v@gmail.com'
+	receiver_email = 'zerberus.fs2v@gmail.com'
+	password = 'rassi123'
+	error = '{}\n\n{}'.format(error,'!!Geraet wird neu gestartet!!')
 	message = 'Subject: {}\n\n{}'.format(subject, error)
 
 	context = ssl.create_default_context()
@@ -20,10 +22,8 @@ def Send(subject, error):
 	server.sendmail(sender_email, receiver_email, message)
 
 try:
-	Send("Zerberus", "started")
 	Zerberus.start()
 
-
 except Exception as error:
-	Send("Error", error)
-	subprocess.call("/home/pi/Zerberus/Restart", shell=True)
+	Send('ERROR:', error)
+	subprocess.call('/home/pi/Zerberus/Restart', shell=True)

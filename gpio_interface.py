@@ -1,11 +1,23 @@
 #!/usr/bin/env python
 #	Yannik Seitz 20.03.19
-#	FS2V Tuerzugangs-Projekt 
+#	FS2V Tuerzugangs-Projekt
 #	Diese Datei beinhaltet alle selbst geschriebenen GPIO-Funktionen
 
 import RPi.GPIO as GPIO
 import SimpleMFRC522
 import time
+
+	# GPIO-Eingaenge konfigurieren
+def setup():
+	GPIO.setwarnings(False)
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(17,GPIO.OUT)
+	GPIO.setup(18,GPIO.OUT)
+	GPIO.setup(22,GPIO.OUT)
+	GPIO.output(18,GPIO.HIGH)
+	GPIO.cleanup()
+
+
 
 	# RFID lesen mit SimpleMFRC522-Funktion
 def read():
@@ -20,14 +32,28 @@ def read():
 	# Rote LED
 def errorSignal():
 	GPIO.setmode(GPIO.BCM)
-	GPIO.setup(17,GPIO.OUT)
+        GPIO.setup(17,GPIO.OUT)
 	print("LED on")
 	GPIO.output(17,GPIO.HIGH)
 	time.sleep(1)
 	print("LED off")
 	GPIO.output(17,GPIO.LOW)
 	GPIO.cleanup()
-	
+
+        # Gelbe LED an
+def onSignal():
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(22,GPIO.OUT)
+	print("LED on")
+	GPIO.output(22,GPIO.HIGH)
+
+        # Gelbe LED aus
+def offSignal():
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(22,GPIO.OUT)
+	print("LED off")
+	GPIO.output(22,GPIO.LOW)
+	GPIO.cleanup()
 
 	# Tuer oeffnen
 def openDoor():

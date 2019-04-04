@@ -59,6 +59,8 @@ def scan():
 
 	# Endlose Schleife mit Pause
 def start():
+	gpio_interface.setup()
+        gpio_interface.onSignal()
 	while True:
 		scan()
 		time.sleep(1)
