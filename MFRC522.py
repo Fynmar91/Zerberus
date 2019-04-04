@@ -27,7 +27,7 @@ import time
 import logging
 
 class MFRC522:
-    NRSTPD = 22
+    NRSTPD = 25
 
     MAX_LEN = 16
 
@@ -137,7 +137,7 @@ class MFRC522:
         level = logging.getLevelName(debugLevel)
         self.logger.setLevel(level)
 
-        GPIO.setmode(GPIO.BOARD)
+        GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.NRSTPD, GPIO.OUT)
         GPIO.output(self.NRSTPD, 1)
         self.MFRC522_Init()

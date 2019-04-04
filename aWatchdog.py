@@ -22,8 +22,12 @@ def Send(subject, error):
 	server.sendmail(sender_email, receiver_email, message)
 
 try:
+        gpio_interface.setup()
+        gpio_interface.onSignal()
 	Zerberus.start()
 
+
 except Exception as error:
+	gpio_interface.offSignal()
 	Send('ERROR:', error)
 	subprocess.call('/home/pi/Zerberus/Restart', shell=True)
