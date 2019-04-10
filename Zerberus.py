@@ -9,16 +9,14 @@ import gpio_interface
 import sql_interface
 import time
 
-roomNr = 420
-
 	# Ruft Logging-Funktion auf
 def log(event, tagID, User):
 	if(event == 1):		# Zugang erlaubt
-		sql_interface.writeLog1(event, tagID, roomNr, User)
+		sql_interface.writeLog1(event, tagID, room_number, User)
 	elif(event == 0):	# Zugang verweigert
-		sql_interface.writeLog0(event, tagID, roomNr, User)
+		sql_interface.writeLog0(event, tagID, room_number, User)
 	elif(event == 2):	# RFID unbekannt
-		sql_interface.writeLog2(event, tagID, roomNr)
+		sql_interface.writeLog2(event, tagID, room_number)
 	else:
 		print("log() error")
 
@@ -35,7 +33,7 @@ def checkAccess(userPrio, roomPrio):
 	# Sucht Nutzer und Raumdaten, prueft Berechtigung und oeffnet evtl die Tuer
 def process(tagID):
 	User = sql_interface.readUser(tagID)
-	Room = sql_interface.readRoom(roomNr)
+	Room = sql_interface.readRoom(room_nummer)
 	if(User and Room):
 		event = checkAccess(User[6], Room[6])
 	elif(User == 0 and Room):
