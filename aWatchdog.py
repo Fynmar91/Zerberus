@@ -4,7 +4,7 @@
 #	auto Watchdog v1.1
 #	Yannik Seitz 11.04.19
 #	Dieses Programm startet das aZerberus-Programm und berwacht dieses. 
-#	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgeführt.
+#	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt.
 
 import time
 import subprocess
