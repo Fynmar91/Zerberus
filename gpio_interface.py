@@ -42,11 +42,11 @@ def ErrEvent2():
 	time.sleep(1)
 	GPIO.output(17,GPIO.LOW)
 
-        # Gelbe LED an
+	# Gelbe LED an
 def onSignal():
 	GPIO.output(22,GPIO.HIGH)
 
-        # Gelbe LED aus
+	# Gelbe LED aus
 def offSignal():
 	GPIO.output(22,GPIO.LOW)
 
