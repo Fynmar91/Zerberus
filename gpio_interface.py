@@ -32,9 +32,9 @@ def read():
 def ErrEvent0():
 	for i in range(10):
 		GPIO.output(17,GPIO.HIGH)
-		time.sleep(0.1)
+		time.sleep(0.05)
 		GPIO.output(17,GPIO.LOW)
-		time.sleep(0.1)
+		time.sleep(0.05)
 
 
 def ErrEvent2():
