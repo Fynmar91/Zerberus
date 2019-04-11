@@ -36,24 +36,24 @@ def readRoom(SQL, room_number):
 	# Logt im Fall: erfolgreicher Zugang
 def writeLog1(event, tagID, SQL, room_number, User):
 	curser, db = SQLaccess(SQL)
-	curser.execute("INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())", (event, tagID, roomNr, User[1]))
+	curser.execute("INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())", (event, tagID, room_number, User[1]))
 	db.commit()
 
 	# Logt im Fall: verweigerter Zugang
 def writeLog0(event, tagID, SQL, room_number, User):
 	curser, db = SQLaccess(SQL)
-	curser.execute("INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())", (event, tagID, roomNr, User[1]))
+	curser.execute("INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())", (event, tagID, room_number, User[1]))
 	db.commit()
 
 	# Logt im Fall: unbekannte RFID
 def writeLog2(event, tagID, SQL, room_number):
 	curser, db = SQLaccess(SQL)
-	curser.execute("INSERT INTO Logs (event, tagID, roomNr, date, time) VALUES (%s, %s, %s, CURDATE(), CURRENT_TIME())", (event, tagID, roomNr))
+	curser.execute("INSERT INTO Logs (event, tagID, roomNr, date, time) VALUES (%s, %s, %s, CURDATE(), CURRENT_TIME())", (event, tagID, room_number))
 	db.commit()
 
 	# Setzt openFlag des Raums auf 0
 def resetOpenFlag(SQL, room_number):
 	curser, db = SQLaccess(SQL)
-	curser.execute("UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s", (roomNr,))
+	curser.execute("UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s", (room_number,))
 	db.commit()
 
