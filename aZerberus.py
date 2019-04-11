@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-#	Zerberus FS2V Tuerzugangs-Projekt
-#	auto Zerberus v1.3
+#	Projekt: Zerberus FS2V Zugangskontrolle
+#	auto Zerberus v1.4
 #	Yannik Seitz 11.04.19
 #	Dieses Programm wird durch den aWatchdog-Dienst gestartet und verarbeitet einkommende RFID-Oeffnungsanfragen
 #	GPIO- und SQL-Aufgaben sind in zwei andere Dateinen ausgelagert
@@ -22,25 +22,23 @@ def log(event, tagID, User, SQL, room_number):
 	# Prueft Zugangsbrechtigung
 def checkAccess(userPrio, roomPrio):
 	if(userPrio >= roomPrio):
-		return 1	# Zugang erlaubt
+		return 1	# Event 1; Zugang erlaubt
 	else:
-		return 0	 # Zugang verweigert
+		return 0	# Event 0; Zugang verweigert
 
 	# Sucht Nutzer und Raumdaten, prueft Berechtigung und oeffnet evtl die Tuer
 def process(tagID, SQL, room_number):
 	User = sql_interface.readUser(tagID, SQL)
 	Room = sql_interface.readRoom(SQL, room_number)
 	if(User and Room):
-		event = checkAccess(User[6], Room[6])
+		event = checkAccess(User[6], Room[6])	# User[6] = Users::Prio; Room[6] = Rooms::Prio
 	elif(User == false and Room):
-		event = 2	# RFID unbekannt
-	else:
-		event = 3	# Unvorhergesehner moeglicher Fehler?
+		event = 2	# Event 2; RFID unbekannt
 	log(event, tagID, User, SQL, room_number)	# Logging
-	if(event == 1):
+	if(event == 1):	# Event 1; Zugang erlaubt
 		gpio_interface.openDoor()	# Tuer oeffnen
 	else:
-		gpio_interface.errorSignal()	# Kein Zugang, rote LED
+		gpio_interface.errorSignal()	# Event 0; Kein Zugang, rote LED
 
 	# Sucht nach RFID Tag und ruft Prozess zur Verarbeitung auf
 def scan(SQL, room_number):

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#	Zerberus FS2V Tuerzugangs-Projekt
+#	Projekt: Zerberus FS2V Zugangskontrolle
 #	auto Watchdog v1.1
 #	Yannik Seitz 11.04.19
 #	Dieses Programm wird durch den aWatchdog-Dienst gestartet und verarbeitet einkommende RFID-Oeffnungsanfragen

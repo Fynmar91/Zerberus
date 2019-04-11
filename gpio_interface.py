@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#	Zerberus FS2V Tuerzugangs-Projekt
+#	Projekt: Zerberus FS2V Zugangskontrolle
 #	GPIO Interface v1.2
 #	Yannik Seitz 11.04.19
 #	Diese Datei beinhaltet alle Funktionen die den GPIO steuern

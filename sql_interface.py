@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#	Zerberus FS2V Tuerzugangs-Projekt
+#	Projekt: Zerberus FS2V Zugangskontrolle
 #	SQL Interface v1.1
 #	Yannik Seitz 11.04.19
 #	Diese Datei beinhaltet alle Funktionen um mit dem SQL-Server zu komunizieren
@@ -9,7 +9,7 @@ import MySQLdb
 
 	# Stellt SQL-Zugang zur Datenbank her
 def SQLaccess(SQL):
-	db = MySQLdb.connect(host=SQL[0], user=SQL[1], passwd=SQL[2], db=SQL[3])
+	db = MySQLdb.connect(host=SQL[0], user=SQL[1], passwd=SQL[2], db=SQL[3])	# SQL = (sql_ip, sql_user, sql_password, sql_database)
 	curser = db.cursor()
 	return curser, db
 

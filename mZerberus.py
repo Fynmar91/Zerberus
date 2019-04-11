@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#	Zerberus FS2V Tuerzugangs-Projekt
+#	Projekt: Zerberus FS2V Zugangskontrolle
 #	manual Zerberus v1.1
 #	Yannik Seitz 11.04.19
 #	Dieses Programm wird durch den bWatchdog-Dienst gestartet und verarbeitet einkommende SQL-Oeffnungsanfragen
@@ -14,7 +14,7 @@ import time
 def checkManualOpen(SQL, room_number):
 	Room = sql_interface.readRoom(SQL, room_number)
 	if(Room):
-		if(Room[7] == 1):
+		if(Room[7] == 1):	# Room[7] = Rooms::openFlag
 			gpio_interface.openDoor()
 			sql_interface.resetOpenFlag(SQL, room_number)
 
