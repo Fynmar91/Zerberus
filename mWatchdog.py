@@ -10,8 +10,8 @@ import time
 import subprocess
 import smtplib
 import ssl
-import Manual
 
+import mZerberus
 import ConfigParser
 
 def ReadConfig():
@@ -60,5 +60,5 @@ try:
 
 
 except Exception as error:
-	Send(MAIL, 'ERROR', error)
+	Send(MAIL, 'ZERBERUS: ERROR MANUAL WATCHDOG', error)
 	subprocess.call('/home/pi/Zerberus/restart', shell=True)

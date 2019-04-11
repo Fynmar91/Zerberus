@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #	Zerberus FS2V Tuerzugangs-Projekt
-#	GPIO Interface v1.1
+#	GPIO Interface v1.2
 #	Yannik Seitz 11.04.19
 #	Diese Datei beinhaltet alle Funktionen die den GPIO steuern
 
@@ -25,40 +25,25 @@ def read():
 	reader = SimpleMFRC522.SimpleMFRC522()
 	try:
 		id, text = reader.read()
-		print("RFID.read() %s " % id)
 	finally:
 		return id
 
 	# Rote LED
 def errorSignal():
-#	GPIO.setmode(GPIO.BCM)
-#	GPIO.setup(17,GPIO.OUT)
-	print("LED on")
 	GPIO.output(17,GPIO.HIGH)
 	time.sleep(1)
-	print("LED off")
 	GPIO.output(17,GPIO.LOW)
 
         # Gelbe LED an
 def onSignal():
-#	GPIO.setmode(GPIO.BCM)
-#	GPIO.setup(22,GPIO.OUT)
-	print("LED on")
 	GPIO.output(22,GPIO.HIGH)
 
         # Gelbe LED aus
 def offSignal():
-#	GPIO.setmode(GPIO.BCM)
-#	GPIO.setup(22,GPIO.OUT)
-	print("LED off")
 	GPIO.output(22,GPIO.LOW)
 
 	# Tuer oeffnen
 def openDoor():
-#	GPIO.setmode(GPIO.BCM)
-#	GPIO.setup(18,GPIO.OUT)
-	print("Relay on")
 	GPIO.output(18,GPIO.LOW)
 	time.sleep(3)
-	print("Relay off")
 	GPIO.output(18,GPIO.HIGH)

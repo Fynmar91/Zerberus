@@ -15,7 +15,6 @@ def checkManualOpen():
 	Room = sql_interface.readRoom(SQL, room_number)
 	if(Room):
 		if(Room[7] == 1):
-			print("Manual")
 			gpio_interface.openDoor()
 			sql_interface.resetOpenFlag(SQL, room_number)
 

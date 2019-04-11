@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #	Zerberus FS2V Tuerzugangs-Projekt
-#	auto Zerberus v1.1
+#	auto Zerberus v1.3
 #	Yannik Seitz 11.04.19
 #	Dieses Programm wird durch den aWatchdog-Dienst gestartet und verarbeitet einkommende RFID-Oeffnungsanfragen
 #	GPIO- und SQL-Aufgaben sind in zwei andere Dateinen ausgelagert
@@ -37,12 +37,10 @@ def process(tagID, SQL, room_number):
 	Room = sql_interface.readRoom(SQL, room_number)
 	if(User and Room):
 		event = checkAccess(User[6], Room[6])
-	elif(User == false and Room):
-		print("Unbekannt Event 2")	# RFID unbekannt
-		event = 2
+	elif(User == false and Room):		
+		event = 2	# RFID unbekannt
 	else:
-		print("process() error")	# Unvorhergesehner moeglicher Fehler?
-		event = 3
+		event = 3	# Unvorhergesehner moeglicher Fehler?
 	log(event, tagID, User, SQL, room_number)	# Logging
 	if(event == 1):
 		gpio_interface.openDoor()	# Tuer oeffnen

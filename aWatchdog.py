@@ -11,7 +11,7 @@ import subprocess
 import smtplib
 import ssl
 
-import Zerberus
+import aZerberus
 import gpio_interface
 import ConfigParser
 
@@ -65,5 +65,5 @@ try:
 
 except Exception as error:
 	gpio_interface.offSignal()
-	Send(MAIL, 'ERROR:', error)
+	Send(MAIL, 'ZERBERUS: ERROR AUTO WATCHDOG:', error)
 	subprocess.call('/home/pi/Zerberus/Restart', shell=True)
