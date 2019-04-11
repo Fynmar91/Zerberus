@@ -3,8 +3,8 @@
 #	Projekt: Zerberus FS2V Zugangskontrolle
 #	auto Watchdog v1.1
 #	Yannik Seitz 11.04.19
-#	Dieses Programm wird durch den aWatchdog-Dienst gestartet und verarbeitet einkommende RFID-Oeffnungsanfragen
-#	GPIO- und SQL-Aufgaben sind in zwei andere Dateinen ausgelagert
+#	Dieses Programm startet das aZerberus-Programm und berwacht dieses. 
+#	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgeführt.
 
 import time
 import subprocess
