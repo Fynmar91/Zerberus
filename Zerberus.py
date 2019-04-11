@@ -10,13 +10,13 @@ import sql_interface
 import time
 
 	# Ruft Logging-Funktion auf
-def log(event, tagID, User):
+def log(event, tagID, User, SQL, room_number):
 	if(event == 1):		# Zugang erlaubt
-		sql_interface.writeLog1(event, tagID, room_number, User)
+		sql_interface.writeLog1(event, tagID, SQL, room_number, User)
 	elif(event == 0):	# Zugang verweigert
-		sql_interface.writeLog0(event, tagID, room_number, User)
+		sql_interface.writeLog0(event, tagID, SQL, room_number, User)
 	elif(event == 2):	# RFID unbekannt
-		sql_interface.writeLog2(event, tagID, room_number)
+		sql_interface.writeLog2(event, tagID, SQL, room_number)
 	else:
 		print("log() error")
 
@@ -31,12 +31,12 @@ def checkAccess(userPrio, roomPrio):
 		return 0
 
 	# Sucht Nutzer und Raumdaten, prueft Berechtigung und oeffnet evtl die Tuer
-def process(tagID):
-	User = sql_interface.readUser(tagID)
-	Room = sql_interface.readRoom(room_nummer)
+def process(tagID, SQL, room_number):
+	User = sql_interface.readUser(tagID, SQL)
+	Room = sql_interface.readRoom(SQL, room_number)
 	if(User and Room):
 		event = checkAccess(User[6], Room[6])
-	elif(User == 0 and Room):
+	elif(User == false and Room):
 		print("Unbekannt Event 2")	# RFID unbekannt
 		event = 2
 	else:
@@ -49,14 +49,14 @@ def process(tagID):
 		gpio_interface.errorSignal()	# Kein Zugang, rote LED
 
 	# Sucht nach RFID Tag und ruft Prozess zur Verarbeitung auf
-def scan():
+def scan(SQL, room_number):
 	tagID = gpio_interface.read()
 	if(tagID):
-		process(tagID)
+		process(tagID, SQL, room_number)
 
 
 	# Endlose Schleife mit Pause
-def start():
+def start(SQL, room_number):
 	while True:
-		scan()
+		scan(SQL, room_number)
 		time.sleep(1)

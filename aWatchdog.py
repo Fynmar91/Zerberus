@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import time
 import subprocess
 import smtplib
@@ -7,23 +6,28 @@ import ssl
 
 import Zerberus
 import gpio_interface
-
-#Config einlesen
 import ConfigParser
-config = ConfigParser.RawConfigParser()
-config.read('config.ini')
-#SQL config
-sql_ip = config.get('SQL', 'ip')
-sql_user = config.get('SQL', 'user')
-sql_password = config.get('SQL', 'password')
-sql_database = config.get('SQL', 'database')
-#MAIL config
-mail_address = config.get('EMAIL', 'address')
-mail_password = config.get('EMAIL', 'password')
-mail_port = config.getint('EMAIL', 'port')
-mail_smtp = config.get('EMAIL', 'smtp')
-#ROOM config
-room_number = config.get('ROOM', 'number')
+
+def ReadConfig():
+	#Config einlesen	
+	config = ConfigParser.RawConfigParser()
+	config.read('config.ini')
+	#SQL config
+	sql_ip = config.get('SQL', 'ip')
+	sql_user = config.get('SQL', 'user')
+	sql_password = config.get('SQL', 'password')
+	sql_database = config.get('SQL', 'database')
+	#MAIL config
+	mail_address = config.get('EMAIL', 'address')
+	mail_password = config.get('EMAIL', 'password')
+	mail_port = config.getint('EMAIL', 'port')
+	mail_smtp = config.get('EMAIL', 'smtp')
+	#ROOM config
+	room_number = config.get('ROOM', 'number')
+	
+	SQL = (sql_ip, sql_user, sql_password, sql_database)
+
+	return SQL, room_number
 
 
 def Send(subject, error):
@@ -41,9 +45,10 @@ def Send(subject, error):
 	server.sendmail(sender_email, receiver_email, message)
 
 try:
-        gpio_interface.setup()
-        gpio_interface.onSignal()
-	Zerberus.start(sql_ip, sql_user, sql_password, sql_database, room_number)
+	ReadConfig()
+	gpio_interface.setup()
+	gpio_interface.onSignal()
+	Zerberus.start(SQL, room_number)
 
 
 except Exception as error:
