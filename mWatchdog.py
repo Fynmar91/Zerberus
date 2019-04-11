@@ -12,6 +12,7 @@ import smtplib
 import ssl
 
 import mZerberus
+import gpio_interface
 import ConfigParser
 
 def ReadConfig():
@@ -56,6 +57,7 @@ def Send(MAIL, subject, error):
 
 try:
 	SQL, MAIL, room_number = ReadConfig()
+	gpio_interface.setup()
 	mZerberus.start(SQL, room_number)
 
 
