@@ -42,7 +42,7 @@ def process(tagID, SQL, room_number):
 	else:
 		print("process() error")	# Unvorhergesehner moeglicher Fehler?
 		event = 3
-	log(event, tagID, User)	# Logging
+	log(event, tagID, User, SQL, room_number)	# Logging
 	if(event == 1):
 		gpio_interface.openDoor()	# Tuer oeffnen
 	else:
