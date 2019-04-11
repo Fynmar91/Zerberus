@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-#	Yannik Seitz 20.03.19
-#	FS2V Tuerzugangs-Projekt
-#	Diese Datei beinhaltet alle selbst geschriebenen SQL-Funktionen
+
+#	Zerberus FS2V Tuerzugangs-Projekt
+#	SQL Interface v1.1
+#	Yannik Seitz 11.04.19
+#	Diese Datei beinhaltet alle Funktionen um mit dem SQL-Server zu komunizieren
 
 import MySQLdb
 

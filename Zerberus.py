@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-#	Yannik Seitz 20.03.19
+
 #	Zerberus FS2V Tuerzugangs-Projekt
-#	Programm wird durch einen Watchdog-Dienst gestartet und verarbeitet einkommende RFID-Oeffnungsanfragen
+#	auto Zerberus v1.1
+#	Yannik Seitz 11.04.19
+#	Dieses Programm wird durch den aWatchdog-Dienst gestartet und verarbeitet einkommende RFID-Oeffnungsanfragen
 #	GPIO- und SQL-Aufgaben sind in zwei andere Dateinen ausgelagert
-#	Raumnummer soll aus einer Config-Datei ausgelesen werden
 
 import gpio_interface
 import sql_interface

@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+#	Zerberus FS2V Tuerzugangs-Projekt
+#	manual Watchdog v1.1
+#	Yannik Seitz 11.04.19
+#	Dieses Programm wird durch den aWatchdog-Dienst gestartet und verarbeitet einkommende RFID-Oeffnungsanfragen
+#	GPIO- und SQL-Aufgaben sind in zwei andere Dateinen ausgelagert
+
 import time
 import subprocess
 import smtplib
@@ -9,19 +15,23 @@ import Manual
 import ConfigParser
 
 def ReadConfig():
+
 	#Config einlesen
 	config = ConfigParser.RawConfigParser()
 	config.read('config.ini')
+
 	#SQL config
 	sql_ip = config.get('SQL', 'ip')
 	sql_user = config.get('SQL', 'user')
 	sql_password = config.get('SQL', 'password')
 	sql_database = config.get('SQL', 'database')
+
 	#MAIL config
 	mail_address = config.get('EMAIL', 'address')
 	mail_password = config.get('EMAIL', 'password')
 	mail_port = config.getint('EMAIL', 'port')
 	mail_smtp = config.get('EMAIL', 'smtp')
+
 	#ROOM config
 	room_number = config.get('ROOM', 'number')
 	

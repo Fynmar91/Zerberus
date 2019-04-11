@@ -1,6 +1,10 @@
 #!/usr/bin/env python
-#	Yannik Seitz 20.03.19
+
 #	Zerberus FS2V Tuerzugangs-Projekt
+#	manual Zerberus v1.1
+#	Yannik Seitz 11.04.19
+#	Dieses Programm wird durch den bWatchdog-Dienst gestartet und verarbeitet einkommende SQL-Oeffnungsanfragen
+#	GPIO- und SQL-Aufgaben sind in zwei andere Dateinen ausgelagert
 
 import sql_interface
 import gpio_interface
