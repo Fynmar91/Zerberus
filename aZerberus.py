@@ -32,7 +32,7 @@ def process(tagID, SQL, room_number):
 	Room = sql_interface.readRoom(SQL, room_number)
 	if(User and Room):
 		event = checkAccess(User[6], Room[6])	# User[6] = Users::Prio; Room[6] = Rooms::Prio
-	elif(User == false and Room):
+	elif(User == False and Room):
 		event = 2
 	log(event, tagID, User, SQL, room_number)	# Logging
 	if(event == 1):

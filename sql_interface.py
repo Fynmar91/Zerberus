@@ -22,7 +22,7 @@ def readUser(tagID, SQL):
 	if(User):
 		return User
 	else:
-		return false
+		return False
 
 	# Sucht Raumdaten in SQL-Datenbank, gibt Tupel zurueck
 def readRoom(SQL, room_number):
@@ -33,7 +33,7 @@ def readRoom(SQL, room_number):
 	if(Room):
 		return Room
 	else:
-		return false
+		return False
 
 	# Logt im Fall: erfolgreicher Zugang
 def writeLog1(event, tagID, SQL, room_number, User):
