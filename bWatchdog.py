@@ -26,15 +26,16 @@ def ReadConfig():
 	room_number = config.get('ROOM', 'number')
 	
 	SQL = (sql_ip, sql_user, sql_password, sql_database)
+	MAIL = (mail_address, mail_password, mail_port, mail_smtp)
 
-	return SQL, room_number
+	return SQL, MAIL, room_number
 
-def Send(subject, error):
-	port = 465
-	smtp_server = 'smtp.gmail.com'
-	sender_email = 'zerberus.fs2v@gmail.com'
-	receiver_email = 'zerberus.fs2v@gmail.com'
-	password = 'rassi123'
+def Send(MAIL, subject, error):
+	port = MAIL[2]
+	smtp_server = MAIL[3]
+	sender_email = MAIL[0]
+	receiver_email = MAIL[0]
+	password = MAIL[1]
 	error = '{}\n\n{}'.format(error,'!!Geraet wird neu gestartet!!')
 	message = 'Subject: {}\n\n{}'.format(subject, error)
 
@@ -44,9 +45,10 @@ def Send(subject, error):
 	server.sendmail(sender_email, receiver_email, message)
 
 try:
+	SQL, MAIL, room_number = ReadConfig()
 	Manual.start(SQL, room_number)
 
 
 except Exception as error:
-	Send('ERROR', error)
+	Send(MAIL, 'ERROR', error)
 	subprocess.call('/home/pi/Zerberus/restart', shell=True)

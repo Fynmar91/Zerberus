@@ -26,16 +26,17 @@ def ReadConfig():
 	room_number = config.get('ROOM', 'number')
 	
 	SQL = (sql_ip, sql_user, sql_password, sql_database)
+	MAIL = (mail_address, mail_password, mail_port, mail_smtp)
 
-	return SQL, room_number
+	return SQL, MAIL, room_number
 
 
-def Send(subject, error):
-	port = mail_port
-	smtp_server = mail_smtp
-	sender_email = mail_address
-	receiver_email = mail_address
-	password = mail_password
+def Send(MAIL, subject, error):
+	port = MAIL[2]
+	smtp_server = MAIL[3]
+	sender_email = MAIL[0]
+	receiver_email = MAIL[0]
+	password = MAIL[1]
 	error = '{}\n\n{}'.format(error,'!!Geraet wird neu gestartet!!')
 	message = 'Subject: {}\n\n{}'.format(subject, error)
 
@@ -45,7 +46,7 @@ def Send(subject, error):
 	server.sendmail(sender_email, receiver_email, message)
 
 try:
-	ReadConfig()
+	SQL, MAIL, room_number = ReadConfig()
 	gpio_interface.setup()
 	gpio_interface.onSignal()
 	Zerberus.start(SQL, room_number)
@@ -53,5 +54,5 @@ try:
 
 except Exception as error:
 	gpio_interface.offSignal()
-	Send('ERROR:', error)
+	Send(MAIL, 'ERROR:', error)
 	subprocess.call('/home/pi/Zerberus/Restart', shell=True)
