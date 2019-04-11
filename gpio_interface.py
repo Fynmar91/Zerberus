@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	GPIO Interface v1.2
+#	GPIO Interface v1.3
 #	Yannik Seitz 11.04.19
 #	Diese Datei beinhaltet alle Funktionen die den GPIO steuern
 
@@ -29,7 +29,15 @@ def read():
 		return id
 
 	# Rote LED
-def errorSignal():
+def ErrEvent0():
+	for i in range(10):
+		GPIO.output(17,GPIO.HIGH)
+		time.sleep(0.1)
+		GPIO.output(17,GPIO.LOW)
+		time.sleep(0.1)
+
+
+def ErrEvent2():
 	GPIO.output(17,GPIO.HIGH)
 	time.sleep(1)
 	GPIO.output(17,GPIO.LOW)
