@@ -18,18 +18,13 @@ def log(event, tagID, User, SQL, room_number):
 		sql_interface.writeLog0(event, tagID, SQL, room_number, User)
 	elif(event == 2):	# RFID unbekannt
 		sql_interface.writeLog2(event, tagID, SQL, room_number)
-	else:
-		print("log() error")
 
 	# Prueft Zugangsbrechtigung
 def checkAccess(userPrio, roomPrio):
-	print("%s >= %s" % (userPrio, roomPrio))
 	if(userPrio >= roomPrio):
-		print("Zugang Event 1")	# Zugang erlaubt
-		return 1
+		return 1	# Zugang erlaubt
 	else:
-		print("NEIN Event 0")	# Zugang verweigert
-		return 0
+		return 0	 # Zugang verweigert
 
 	# Sucht Nutzer und Raumdaten, prueft Berechtigung und oeffnet evtl die Tuer
 def process(tagID, SQL, room_number):
@@ -37,7 +32,7 @@ def process(tagID, SQL, room_number):
 	Room = sql_interface.readRoom(SQL, room_number)
 	if(User and Room):
 		event = checkAccess(User[6], Room[6])
-	elif(User == false and Room):		
+	elif(User == false and Room):
 		event = 2	# RFID unbekannt
 	else:
 		event = 3	# Unvorhergesehner moeglicher Fehler?

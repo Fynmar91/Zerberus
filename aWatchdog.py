@@ -17,7 +17,7 @@ import ConfigParser
 
 def ReadConfig():
 
-	#Config einlesen	
+	#Config einlesen
 	config = ConfigParser.RawConfigParser()
 	config.read('config.ini')
 
@@ -35,7 +35,7 @@ def ReadConfig():
 
 	#ROOM config
 	room_number = config.get('ROOM', 'number')
-	
+
 	SQL = (sql_ip, sql_user, sql_password, sql_database)
 	MAIL = (mail_address, mail_password, mail_port, mail_smtp)
 
@@ -60,7 +60,7 @@ try:
 	SQL, MAIL, room_number = ReadConfig()
 	gpio_interface.setup()
 	gpio_interface.onSignal()
-	Zerberus.start(SQL, room_number)
+	aZerberus.start(SQL, room_number)
 
 
 except Exception as error:

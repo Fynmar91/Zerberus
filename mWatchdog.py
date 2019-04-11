@@ -34,7 +34,7 @@ def ReadConfig():
 
 	#ROOM config
 	room_number = config.get('ROOM', 'number')
-	
+
 	SQL = (sql_ip, sql_user, sql_password, sql_database)
 	MAIL = (mail_address, mail_password, mail_port, mail_smtp)
 
@@ -56,7 +56,7 @@ def Send(MAIL, subject, error):
 
 try:
 	SQL, MAIL, room_number = ReadConfig()
-	Manual.start(SQL, room_number)
+	mZerberus.start(SQL, room_number)
 
 
 except Exception as error:

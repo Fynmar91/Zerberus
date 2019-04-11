@@ -11,7 +11,7 @@ import gpio_interface
 import time
 
 	# Prueft ob openFlag gesetzt wurde
-def checkManualOpen():
+def checkManualOpen(SQL, room_number):
 	Room = sql_interface.readRoom(SQL, room_number)
 	if(Room):
 		if(Room[7] == 1):
