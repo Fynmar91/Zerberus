@@ -54,9 +54,9 @@ def offSignal():
 def openDoor():
 	GPIO.output(18,GPIO.LOW)
 	for i in range(5):
-		GPIO.output(18,GPIO.HIGH)
+		GPIO.output(22,GPIO.HIGH)
 		time.sleep(0.05)
-		GPIO.output(18,GPIO.LOW)
+		GPIO.output(22,GPIO.LOW)
 		time.sleep(0.05)
 	time.sleep(3)
 	GPIO.output(18,GPIO.HIGH)
