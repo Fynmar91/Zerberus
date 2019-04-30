@@ -19,7 +19,9 @@ def main():
 	print('1')
 	while True:
 		print('2')
-		event, key, name = False
+		event = False
+		key = False
+		name = False
 		print('3')
 		GPIO.output(22,GPIO.HIGH) # Status LED Gruen an
 		print('4')
