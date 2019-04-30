@@ -3,8 +3,8 @@
 #	Projekt: Zerberus FS2V Zugangskontrolle
 #	Zerberus v1.1
 #	Yannik Seitz 30.04.19
-#	Dieses verarbeitet einkommende RFID-Oeffnungsanfragen
-#	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt.
+#	Dieses Programm verarbeitet eingelesene RFID-tagIDs und ueberprueft ob sie zugangsberechtigt sind
+#	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt
 
 import time
 import subprocess
