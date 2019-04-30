@@ -107,7 +107,7 @@ class Door:
 	def ResetOpenFlag(self):	# Setzt openFlag des Raums auf 0
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
-		curser.execute("UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s", self.number)
+		curser.execute("UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s", (self.number,))
 		db.commit()
 		db.close()
 
