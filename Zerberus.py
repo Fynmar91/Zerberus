@@ -33,7 +33,7 @@ def main():
 
 def manual():
 	GPIOsetup()
-	door = Door()
+	door = door_class.Door()
 	while True:
 		door.CheckManualOpen()
 		time.sleep(5)
