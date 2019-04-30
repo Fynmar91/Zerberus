@@ -106,7 +106,7 @@ class Door:
 			time.sleep(0.05)
 
 class Mail:
-	def __init__(self, error):
+	def __init__(self):
 		config = ConfigParser.RawConfigParser()
 		config.read('config.ini')
 		self.address = config.get('EMAIL', 'Adresse')
