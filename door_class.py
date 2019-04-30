@@ -4,6 +4,7 @@
 #	Door Class v1.0
 #	Yannik Seitz 30.04.19
 
+import time
 import ConfigParser
 import MySQLdb
 import RPi.GPIO as GPIO
