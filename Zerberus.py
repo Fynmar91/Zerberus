@@ -13,6 +13,7 @@ import SimpleMFRC522
 import MySQLdb
 import ConfigParser
 
+
 def main():
 	GPIOsetup()
 	door = Door()
