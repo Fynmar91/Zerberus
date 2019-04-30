@@ -1,5 +1,7 @@
+#!/usr/bin/env python
+
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	Zerberus v1.0
+#	Zerberus v1.1
 #	Yannik Seitz 30.04.19
 #	Dieses verarbeitet einkommende RFID-Oeffnungsanfragen
 #	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt.
@@ -12,6 +14,7 @@ import RPi.GPIO as GPIO
 import SimpleMFRC522
 import MySQLdb
 import ConfigParser
+import Zerberus
 
 def main():
 	GPIOsetup()
@@ -30,6 +33,14 @@ def main():
 			door.Prohibited()	# Event 0; Kein Zugang; rote LED blinkt
 		elif(event == 2):
 			door.Unknown()		# Event 2; Unbekannt; rote LED
+
+def manual():
+	GPIOsetup()
+	door = Door()
+	while True:
+		door.CheckManualOpen()
+		time.sleep(5)
+
 
 def GPIOsetup():
 	GPIO.setwarnings(False)
@@ -60,12 +71,19 @@ class Door:
 		User = self.Query("SELECT * FROM Users WHERE tagID = %s", key)
 		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", self.number)
 		if(User and Room):
-			if(User[6] >= Room[6]):
+			if(User[6] >= Room[6]):	# User[6] = Prio; Room[6] = Prio
 				return 1, User[1]	# Event 1; Zugang erlaubt
 			else:
 				return 0, User[1]	# Event 0; Zugang verweigert
 		elif(User == False and Room):
 			return 2, 'Unbekannt'	# Event 2; Unbekannt
+
+	def CheckManualOpen(self):	# Prueft ob openFlag gesetzt wurde
+		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", self.number)
+		if(Room):
+			if(Room[7] == 1):	# Room[7] = Rooms; openFlag
+				self.Open()
+				self.ResetOpenFlag()
 
 	def Query(self, query, var): # SQL Anfrage
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
@@ -83,6 +101,13 @@ class Door:
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
 		curser.execute("INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())", (event, key, self.number, name))
+		db.commit()
+		db.close()
+
+	def ResetOpenFlag(self):	# Setzt openFlag des Raums auf 0
+		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
+		curser = db.cursor()
+		curser.execute("UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s", self.number)
 		db.commit()
 		db.close()
 
@@ -134,4 +159,11 @@ if __name__ == "__main__":
 		mail = Mail()
 		mail.SendError(error)
 		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
-	
+else:
+	try:
+		manual()
+
+	except Exception as error:
+		mail = Mail()
+		mail.SendError(error)
+		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
