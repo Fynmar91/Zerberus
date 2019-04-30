@@ -62,8 +62,8 @@ class Door:
 		self.number = config.get('ROOM', 'Raumnummer')
 
 	def Check(self, key):	# Zungangsberechtigung kontrollieren
-		User = Query("SELECT * FROM Users WHERE tagID = %s", key)
-		Room = Query("SELECT * FROM Rooms WHERE roomNr = %s", self.number)
+		User = self.Query("SELECT * FROM Users WHERE tagID = %s", key)
+		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", self.number)
 		if(User and Room):
 			if(User[6] >= Room[6]):
 				return 1, User[1]	# Event 1; Zugang erlaubt
