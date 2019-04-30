@@ -49,6 +49,18 @@ class Door:
 		else:
 			return False
 
+	def GetLogs(self): # SQL Anfrage
+		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
+		curser = db.cursor()
+		curser.execute("SELECT * FROM Logs")
+		result = curser.fetchall()
+		db.commit()
+		db.close()
+		if(result):
+			return result
+		else:
+			return False
+
 	def Log(self, event, key, name):	# Event protokollieren
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
