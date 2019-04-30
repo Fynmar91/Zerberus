@@ -5,6 +5,11 @@
       "taskName": "task-aWatchdog",
       "appliesTo": "aWatchdog.py",
       "type": "launch"
+    },
+    {
+      "taskName": "task-class_mail",
+      "appliesTo": "class_mail.py",
+      "type": "launch"
     }
   ]
 }

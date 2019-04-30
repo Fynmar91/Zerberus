@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	Archive v1.0
+#	Archive v1.1
 #	Yannik Seitz 30.04.19
 #	Dieses Programm
 
 import time
 import subprocess
-import mail_class
-import door_class
+import class_mail
+import class_sql
 
 def main():
-	door = door_class.Door()
+	sql = class_sql.Door()
 	mail = mail_class.Mail()
-	logs = door.GetLogs()
+	logs = sql.GetLogs()
 	mail.SendArchive(logs, 'Logarchiv:')
 
 if __name__ == "__main__":

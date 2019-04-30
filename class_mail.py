@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	Mail Class v1.0
+#	Mail Klasse v1.1
 #	Yannik Seitz 30.04.19
 
 import ConfigParser
