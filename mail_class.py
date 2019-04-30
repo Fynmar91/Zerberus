@@ -18,10 +18,10 @@ class Mail:
 		self.smtp = config.get('EMAIL', 'smtpAdresse')
 
 	def SendArchive(self, logs, subject): # Email senden
+		list = ''
 		for tuple in logs:
-			formatLog = '{}\n\n{}'.format(formatLog, tuple)
-		formatLog = '{}\n\n{}'.format(formatLog,'!!Geraet wird neu gestartet!!')
-		message = 'Subject: {}\n\n{}'.format(subject, formatLog)
+			list = '{}\n\n{}'.format(list, tuple)
+		message = 'Subject: {}\n\n{}'.format(subject, list)
 
 		context = ssl.create_default_context()
 		server = smtplib.SMTP_SSL(self.smtp, self.port)
