@@ -19,8 +19,8 @@ class Mail:
 		self.smtp = config.get('EMAIL', 'smtpAdresse')
 
 	def SendArchive(self, log, subject): # Email senden
-		error = numpy.matrix(error)
-		error = '{}\n\n{}'.format(log,'!!Geraet wird neu gestartet!!')
+		log = numpy.matrix(error)
+		log = '{}\n\n{}'.format(log,'!!Geraet wird neu gestartet!!')
 		message = 'Subject: {}\n\n{}'.format(subject, log)
 
 		context = ssl.create_default_context()
