@@ -63,6 +63,13 @@ class SQL:
 		else:
 			return False
 
+	def DelLogs(self): # SQL Anfrage
+		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
+		curser = db.cursor()
+		curser.execute("DELETE FROM Logs")
+		db.commit()
+		db.close()
+
 	def CheckManualAccess(self, number):	# Prueft ob openFlag gesetzt wurde
 		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", number)
 		if(Room):

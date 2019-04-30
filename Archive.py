@@ -15,6 +15,7 @@ def main():
 	mail = class_mail.Mail()
 	logs = sql.GetLogs()
 	mail.SendArchive(logs, 'Logarchiv:')
+	sql.DelLogs()
 
 if __name__ == "__main__":
 	try:
