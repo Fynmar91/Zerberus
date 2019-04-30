@@ -6,6 +6,7 @@
 
 import ConfigParser
 import MySQLdb
+import RPi.GPIO as GPIO
 
 class Door:
 	def __init__(self):
