@@ -19,6 +19,7 @@ def readUser(tagID, SQL):
 	curser.execute("SELECT * FROM Users WHERE tagID = %s", (tagID,))
 	User = curser.fetchone()
 	db.commit()
+	db.close()
 	if(User):
 		return User
 	else:
@@ -30,6 +31,7 @@ def readRoom(SQL, room_number):
 	curser.execute("SELECT * FROM Rooms WHERE roomNr = %s", (room_number,))
 	Room = curser.fetchone()
 	db.commit()
+	db.close()
 	if(Room):
 		return Room
 	else:
@@ -40,22 +42,25 @@ def writeLog1(event, tagID, SQL, room_number, User):
 	curser, db = SQLaccess(SQL)
 	curser.execute("INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())", (event, tagID, room_number, User[1]))
 	db.commit()
+	db.close()
 
 	# Logt im Fall: verweigerter Zugang
 def writeLog0(event, tagID, SQL, room_number, User):
 	curser, db = SQLaccess(SQL)
 	curser.execute("INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())", (event, tagID, room_number, User[1]))
 	db.commit()
+	db.close()
 
 	# Logt im Fall: unbekannte RFID
 def writeLog2(event, tagID, SQL, room_number):
 	curser, db = SQLaccess(SQL)
 	curser.execute("INSERT INTO Logs (event, tagID, roomNr, date, time) VALUES (%s, %s, %s, CURDATE(), CURRENT_TIME())", (event, tagID, room_number))
 	db.commit()
+	db.close()
 
 	# Setzt openFlag des Raums auf 0
 def resetOpenFlag(SQL, room_number):
 	curser, db = SQLaccess(SQL)
 	curser.execute("UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s", (room_number,))
 	db.commit()
-
+	db.close()

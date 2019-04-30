@@ -22,19 +22,19 @@ def ReadConfig():
 	config.read('config.ini')
 
 	#SQL config
-	sql_ip = config.get('SQL', 'ip')
-	sql_user = config.get('SQL', 'user')
-	sql_password = config.get('SQL', 'password')
-	sql_database = config.get('SQL', 'database')
+	sql_ip = config.get('SQL', 'IP')
+	sql_user = config.get('SQL', 'Nutzer')
+	sql_password = config.get('SQL', 'Passwort')
+	sql_database = config.get('SQL', 'DatenbankName')
 
 	#MAIL config
-	mail_address = config.get('EMAIL', 'address')
-	mail_password = config.get('EMAIL', 'password')
-	mail_port = config.getint('EMAIL', 'port')
-	mail_smtp = config.get('EMAIL', 'smtp')
+	mail_address = config.get('EMAIL', 'Adresse')
+	mail_password = config.get('EMAIL', 'Passwort')
+	mail_port = config.getint('EMAIL', 'Port')
+	mail_smtp = config.get('EMAIL', 'smtpAdresse')
 
 	#ROOM config
-	room_number = config.get('ROOM', 'number')
+	room_number = config.get('ROOM', 'Raumnummer')
 
 	SQL = (sql_ip, sql_user, sql_password, sql_database)
 	MAIL = (mail_address, mail_password, mail_port, mail_smtp)
