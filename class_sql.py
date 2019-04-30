@@ -29,7 +29,7 @@ class SQL:
 				event = 0 # Event 0; Zugang verweigert
 		elif(User == False and Room):
 			event = 2 # Event 2; Unbekannt
-		self.sql.Log(event, key, number, name) # Event protokollieren
+		self.Log(event, key, number, name) # Event protokollieren
 		return event
 
 	def Log(self, event, key, number, name):	# Event protokollieren
