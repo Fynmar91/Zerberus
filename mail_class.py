@@ -19,7 +19,7 @@ class Mail:
 
 	def SendArchive(self, log, subject): # Email senden
 		for tuple in log:
-			log = '{}\n\n{}'.format(tuple,'!!Geraet wird neu gestartet!!')
+			log = '{}\n\n{}'.format(log, tuple)
 		log = '{}\n\n{}'.format(log,'!!Geraet wird neu gestartet!!')
 		message = 'Subject: {}\n\n{}'.format(subject, log)
 
