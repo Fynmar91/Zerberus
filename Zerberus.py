@@ -16,13 +16,15 @@ import ConfigParser
 def main():
 	GPIOsetup()
 	door = Door()
+	print('1')
 	while True:
-		event, key, name = False
-		print('1')
-		GPIO.output(22,GPIO.HIGH) # Status LED Gruen an
 		print('2')
-		key = ReadRFID() # RFID-Karte einlesen
+		event, key, name = False
 		print('3')
+		GPIO.output(22,GPIO.HIGH) # Status LED Gruen an
+		print('4')
+		key = ReadRFID() # RFID-Karte einlesen
+		print('5')
 		event, name = door.Check(key) # Zungangsberechtigung kontrollieren
 		door.Log(event, key, name)	# Event protokollieren
 		if(event == 1):
