@@ -18,8 +18,6 @@ def setup():
 	GPIO.setup(22,GPIO.OUT)
 	GPIO.output(18,GPIO.HIGH)
 
-
-
 	# RFID lesen mit SimpleMFRC522-Funktion
 def read():
 	reader = SimpleMFRC522.SimpleMFRC522()
@@ -35,7 +33,6 @@ def ErrEvent0():
 		time.sleep(0.05)
 		GPIO.output(17,GPIO.LOW)
 		time.sleep(0.05)
-
 
 def ErrEvent2():
 	GPIO.output(17,GPIO.HIGH)

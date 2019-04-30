@@ -48,7 +48,6 @@ def scan(SQL, room_number):
 	if(tagID):
 		process(tagID, SQL, room_number)
 
-
 	# Endlose Schleife mit Pause
 def start(SQL, room_number):
 	while True:
