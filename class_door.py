@@ -12,6 +12,8 @@ import class_sql
 
 class Door:
 	def __init__(self):
+		config = ConfigParser.RawConfigParser()
+		config.read('config.ini')
 		self.number = config.get('ROOM', 'Raumnummer')
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM) # GPIO in BCM mode
