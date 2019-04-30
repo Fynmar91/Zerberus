@@ -20,8 +20,8 @@ def main():
 		event = False
 		key = False
 		name = False
-		GPIO.output(22,GPIO.HIGH) # Status LED Gruenan
-		key = ReadRFID() # RFID-Karte einlesen
+		GPIO.output(22,GPIO.HIGH)	# Status LED Gruenan
+		key = ReadRFID()			# RFID-Karte einlesen
 		event, name = door.Check(key) # Zungangsberechtigung kontrollieren
 		door.Log(event, key, name)	# Event protokollieren
 		if(event == 1):
