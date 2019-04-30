@@ -14,8 +14,11 @@ import MySQLdb
 import ConfigParser
 
 def main():
+	print('1')
 	GPIOsetup()
+	print('2')
 	door = Door()
+	print('3')
 	while(1):
 		event, key, name = False
 		GPIO.output(22,GPIO.HIGH) # Status LED Gruen an
