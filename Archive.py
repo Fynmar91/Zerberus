@@ -11,8 +11,8 @@ import class_mail
 import class_sql
 
 def main():
-	sql = class_sql.Door()
-	mail = mail_class.Mail()
+	sql = class_sql.SQL()
+	mail = class_mail.Mail()
 	logs = sql.GetLogs()
 	mail.SendArchive(logs, 'Logarchiv:')
 
