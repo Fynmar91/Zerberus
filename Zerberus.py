@@ -54,7 +54,7 @@ class Door:
 		self.database = config.get('SQL', 'DatenbankName')
 		self.number = config.get('ROOM', 'Raumnummer')
 
-	def Check(key):	# Zungangsberechtigung kontrollieren
+	def Check(self, key):	# Zungangsberechtigung kontrollieren
 		User = Query("SELECT * FROM Users WHERE tagID = %s", key)
 		Room = Query("SELECT * FROM Rooms WHERE roomNr = %s", self.number)
 		if(User and Room):
@@ -65,7 +65,7 @@ class Door:
 		elif(User == False and Room):
 			return 2, 'Unbekannt'	# Event 2; Unbekannt
 
-	def Query(query, var): # SQL Anfrage
+	def Query(self, query, var): # SQL Anfrage
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
 		curser.execute(query, (var,))
@@ -77,14 +77,14 @@ class Door:
 		else:
 			return False
 
-	def Log(event, key, name):	# Event protokollieren
+	def Log(self, event, key, name):	# Event protokollieren
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
 		curser.execute("INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())", (event, key, self.number, name))
 		db.commit()
 		db.close()
 
-	def Open():	# Tuer oeffnen
+	def Open(self):	# Tuer oeffnen
 		GPIO.output(18,GPIO.LOW)
 		for i in range(10):
 			GPIO.output(22,GPIO.HIGH)
@@ -93,12 +93,12 @@ class Door:
 			time.sleep(0.1)
 		GPIO.output(18,GPIO.HIGH)
 
-	def Unknown(): # Unbekannt; rote LED
+	def Unknown(self): # Unbekannt; rote LED
 		GPIO.output(17,GPIO.HIGH)
 		time.sleep(1)
 		GPIO.output(17,GPIO.LOW)
 
-	def Prohibited():	# Kein Zugang; rote LED blinkt
+	def Prohibited(self):	# Kein Zugang; rote LED blinkt
 		for i in range(10):
 			GPIO.output(17,GPIO.HIGH)
 			time.sleep(0.05)
@@ -114,7 +114,7 @@ class Mail:
 		self.port = config.getint('EMAIL', 'Port')
 		self.smtp = config.get('EMAIL', 'smtpAdresse')
 
-	def SendError(error): # Email senden
+	def SendError(self, error): # Email senden
 		subject = 'ZERBERUS ERROR:'
 		error = '{}\n\n{}'.format(error,'!!Geraet wird neu gestartet!!')
 		message = 'Subject: {}\n\n{}'.format(subject, error)
