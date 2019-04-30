@@ -7,6 +7,7 @@
 import ConfigParser
 import smtplib
 import ssl
+import numpy
 
 class Mail:
 	def __init__(self):
@@ -18,6 +19,7 @@ class Mail:
 		self.smtp = config.get('EMAIL', 'smtpAdresse')
 
 	def SendArchive(self, log, subject): # Email senden
+		error = numpy.matrix(error)
 		error = '{}\n\n{}'.format(log,'!!Geraet wird neu gestartet!!')
 		message = 'Subject: {}\n\n{}'.format(subject, log)
 
