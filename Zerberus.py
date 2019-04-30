@@ -1,3 +1,9 @@
+#	Projekt: Zerberus FS2V Zugangskontrolle
+#	Zerberus v1.0
+#	Yannik Seitz 30.04.19
+#	Dieses verarbeitet einkommende RFID-Oeffnungsanfragen
+#	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt.
+
 import time
 import subprocess
 import smtplib
@@ -9,9 +15,10 @@ import ConfigParser
 
 def main():
 	GPIOsetup()
-	GPIO.output(22,GPIO.HIGH) # Status LED Gruen an
 	door = Door()
 	while(1):
+		event, key, name = False
+		GPIO.output(22,GPIO.HIGH) # Status LED Gruen an
 		key = ReadRFID() # RFID-Karte einlesen
 		event, name = door.Check(key) # Zungangsberechtigung kontrollieren
 		door.Log(event, key, name)	# Event protokollieren
@@ -21,7 +28,6 @@ def main():
 			door.Prohibited()	# Event 0; Kein Zugang; rote LED blinkt
 		elif(event == 2):
 			door.Unknown()		# Event 2; Unbekannt; rote LED
-
 
 def GPIOsetup():
 	GPIO.setwarnings(False)
@@ -59,6 +65,18 @@ class Door:
 		elif(User == False and Room):
 			return 2, 'Unbekannt'	# Event 2; Unbekannt
 
+	def Query(query, var): # SQL Anfrage
+		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
+		curser = db.cursor()
+		curser.execute(query, (var,))
+		result = curser.fetchone()
+		db.commit()
+		db.close()
+		if(result):
+			return result
+		else:
+			return False
+
 	def Log(event, key, name):	# Event protokollieren
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
@@ -74,7 +92,6 @@ class Door:
 			GPIO.output(22,GPIO.LOW)
 			time.sleep(0.1)
 		GPIO.output(18,GPIO.HIGH)
-		GPIO.output(22,GPIO.HIGH)
 
 	def Unknown(): # Unbekannt; rote LED
 		GPIO.output(17,GPIO.HIGH)
@@ -88,19 +105,6 @@ class Door:
 			GPIO.output(17,GPIO.LOW)
 			time.sleep(0.05)
 
-	def Query(query, var): # SQL Anfrage
-		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
-		curser = db.cursor()
-		curser.execute(query, (var,))
-		result = curser.fetchone()
-		db.commit()
-		db.close()
-		if(result):
-			return result
-		else:
-			return False
-
-
 class Mail:
 	def __init__(self, error):
 		config = ConfigParser.RawConfigParser()
@@ -109,11 +113,10 @@ class Mail:
 		self.password = config.get('EMAIL', 'Passwort')
 		self.port = config.getint('EMAIL', 'Port')
 		self.smtp = config.get('EMAIL', 'smtpAdresse')
-		self.error = error
 
-	def Send(): # Email senden
+	def SendError(error): # Email senden
 		subject = 'ZERBERUS ERROR:'
-		error = '{}\n\n{}'.format(self.error,'!!Geraet wird neu gestartet!!')
+		error = '{}\n\n{}'.format(error,'!!Geraet wird neu gestartet!!')
 		message = 'Subject: {}\n\n{}'.format(subject, error)
 
 		context = ssl.create_default_context()
@@ -121,13 +124,12 @@ class Mail:
 		server.login(self.address, self.password)
 		server.sendmail(self.address, self.address, message)
 
-
 if __name__ == "__main__":
 	try:
 		main()
 
 	except Exception as error:
-		mail = Mail(error)
-		mail.Send()
+		mail = Mail()
+		mail.SendError(error)
 		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
 	

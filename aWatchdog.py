@@ -41,7 +41,6 @@ def ReadConfig():
 
 	return SQL, MAIL, room_number
 
-
 def Send(MAIL, subject, error):
 	port = MAIL[2]
 	smtp_server = MAIL[3]
@@ -61,7 +60,6 @@ try:
 	gpio_interface.setup()
 	gpio_interface.onSignal()
 	aZerberus.start(SQL, room_number)
-
 
 except Exception as error:
 	gpio_interface.offSignal()
