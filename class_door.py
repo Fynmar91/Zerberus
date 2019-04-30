@@ -15,15 +15,16 @@ class Door:
 		config = ConfigParser.RawConfigParser()
 		config.read('config.ini')
 		self.number = config.get('ROOM', 'Raumnummer')
+		self.sql = class_sql.SQL()
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM) # GPIO in BCM mode
 		GPIO.setup(17,GPIO.OUT) # Rot
 		GPIO.setup(18,GPIO.OUT)	# Tueroeffner
 		GPIO.setup(22,GPIO.OUT)	# Gruen
 		GPIO.output(18,GPIO.HIGH) # Relais schliesst bei low
-		sql = class_sql.SQL()
 
 	def Attempt(self, key):
+
 		event, name = self.sql.CheckPermission(key, self.number) # Zungangsberechtigung kontrollieren
 		self.sql.Log(event, key, name)	# Event protokollieren		
 		if(event == 1):
