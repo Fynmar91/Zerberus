@@ -32,7 +32,7 @@ class Door:
 			self.Unknown() # Event 2; Unbekannt; rote LED
 
 	def ManualOpen(self): # Prueft ob openFlag gesetzt wurde
-		if(self.sql.CheckManualAccess(key, self.number)):
+		if(self.sql.CheckManualAccess(self.number)):
 			self.Granted() # Tuer oeffnen
 
 

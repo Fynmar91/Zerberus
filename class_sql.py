@@ -63,8 +63,6 @@ class SQL:
 		else:
 			return False
 
-
-
 	def CheckManualAccess(self, number):	# Prueft ob openFlag gesetzt wurde
 		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", number)
 		if(Room):
