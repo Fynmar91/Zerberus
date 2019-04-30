@@ -13,7 +13,7 @@ import door_class
 def main():
 	door = door_class.Door()
 	mail = mail_class.Mail()
-	logs = door.Query("SELECT * FROM Logs WHERE logID = *", '*')
+	logs = door.Query("SELECT * FROM Logs WHERE %s", "*")
 	mail.SendArchive(logs, 'Logarchiv:')
 
 if __name__ == "__main__":
