@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	Zerberus v1.2
+#	Zerberus v1.3
 #	Yannik Seitz 30.04.19
 #	Dieses Programm verarbeitet eingelesene RFID-tagIDs und ueberprueft ob sie zugangsberechtigt sind
 #	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt
@@ -22,11 +22,10 @@ def main():
 		name = False
 		GPIO.output(22,GPIO.HIGH) # Status LED Gruenan
 		key = ReadRFID() # RFID-Karte einlesen		
-		door.Attempt(key)
+		door.Open(key)
 
 
 def manual():
-	GPIOsetup()
 	door = class_door.Door()
 	while True:
 		door.CheckManualOpen()

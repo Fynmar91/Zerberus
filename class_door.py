@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	Door Klasse v1.1
+#	Door Klasse v1.2
 #	Yannik Seitz 30.04.19
-
 import time
 import ConfigParser
 import MySQLdb
@@ -19,22 +18,25 @@ class Door:
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM) # GPIO in BCM mode
 		GPIO.setup(17,GPIO.OUT) # Rot
-		GPIO.setup(18,GPIO.OUT)	# Tueroeffner
-		GPIO.setup(22,GPIO.OUT)	# Gruen
+		GPIO.setup(18,GPIO.OUT) # Tueroeffner
+		GPIO.setup(22,GPIO.OUT) # Gruen
 		GPIO.output(18,GPIO.HIGH) # Relais schliesst bei low
 
-	def Attempt(self, key):
-
-		event, name = self.sql.CheckPermission(key, self.number) # Zungangsberechtigung kontrollieren
-		self.sql.Log(event, key, self.number, name)	# Event protokollieren		
+	def Open(self, key):
+		event = self.sql.CheckPermission(key, self.number) # Zungangsberechtigung kontrollieren
 		if(event == 1):
-			self.Open()			# Event 1; Zugang erlaubt; Tuer oeffnen
+			self.Granted() # Event 1; Zugang erlaubt; Tuer oeffnen
 		elif(event == 0):
-			self.Prohibited()	# Event 0; Kein Zugang; rote LED blinkt
+			self.Denied() # Event 0; Kein Zugang; rote LED blinkt
 		elif(event == 2):
-			self.Unknown()		# Event 2; Unbekannt; rote LED
+			self.Unknown() # Event 2; Unbekannt; rote LED
 
-	def Open(self):	# Tuer oeffnen
+	def ManualOpen(self): # Prueft ob openFlag gesetzt wurde
+		if(self.sql.CheckManualAccess(key, self.number)):
+			self.Granted() # Tuer oeffnen
+
+
+	def Granted(self): # Tuer oeffnen
 		GPIO.output(18,GPIO.LOW)
 		for i in range(10):
 			GPIO.output(22,GPIO.HIGH)
@@ -48,7 +50,7 @@ class Door:
 		time.sleep(1)
 		GPIO.output(17,GPIO.LOW)
 
-	def Prohibited(self):	# Kein Zugang; rote LED blinkt
+	def Denied(self): # Kein Zugang; rote LED blinkt
 		for i in range(10):
 			GPIO.output(17,GPIO.HIGH)
 			time.sleep(0.05)
