@@ -15,12 +15,9 @@ import class_door
 
 def main():
 	door = class_door.Door()
-
 	while True:
-		event = False
 		key = False
-		name = False
-		GPIO.output(22,GPIO.HIGH) # Status LED Gruenan
+		GPIO.output(22,GPIO.HIGH) # Status LED Gruen
 		key = ReadRFID() # RFID-Karte einlesen		
 		door.Open(key)
 
@@ -28,7 +25,7 @@ def main():
 def manual():
 	door = class_door.Door()
 	while True:
-		door.CheckManualOpen()
+		door.ManualOpen()
 		time.sleep(5)
 
 def ReadRFID():	# RFID-Karte einlesen
