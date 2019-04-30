@@ -26,7 +26,7 @@ class Door:
 	def Attempt(self, key):
 
 		event, name = self.sql.CheckPermission(key, self.number) # Zungangsberechtigung kontrollieren
-		self.sql.Log(event, key, number, name)	# Event protokollieren		
+		self.sql.Log(event, key, self.number, name)	# Event protokollieren		
 		if(event == 1):
 			self.Open()			# Event 1; Zugang erlaubt; Tuer oeffnen
 		elif(event == 0):
