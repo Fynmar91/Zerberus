@@ -7,6 +7,7 @@ class SimpleMFRC522:
 
   READER = None
 
+
   KEY = [0xFF,0xFF,0xFF,0xFF,0xFF,0xFF]
   BLOCK_ADDRS = [8, 9, 10]
 
@@ -20,9 +21,14 @@ class SimpleMFRC522:
       return id, text
 
   def read_id(self):
+    id = False
+    i = 0
     id = self.read_id_no_block()
-    while not id:
-      id = self.read_id_no_block()
+    while i < 10:
+      if(not id):
+        id = self.read_id_no_block()
+        i += 1
+        time.sleep(1)
     return id
 
   def read_id_no_block(self):

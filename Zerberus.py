@@ -31,7 +31,7 @@ def manual():
 def ReadRFID():	# RFID-Karte einlesen
 	reader = SimpleMFRC522.SimpleMFRC522()
 	try:
-		key, text = reader.read()
+		key, text = reader.read_id()
 	finally:
 		return key
 
