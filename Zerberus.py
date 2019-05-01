@@ -14,11 +14,12 @@ import class_mail
 import class_door
 
 def main():
+	reader = SimpleMFRC522.SimpleMFRC522()
 	door = class_door.Door()
 	while True:
 		key = False
 		GPIO.output(22,GPIO.HIGH) # Status LED Gruen
-		key = ReadRFID() # RFID-Karte einlesen
+		key = reader.read_id() # RFID-Karte einlesen
 		if(key):
 			door.Open(key)
 		else:
@@ -29,13 +30,6 @@ def manual():
 	while True:
 		door.ManualOpen()
 		time.sleep(5)
-
-def ReadRFID():	# RFID-Karte einlesen
-	reader = SimpleMFRC522.SimpleMFRC522()
-	try:
-		key = reader.read_id()
-	finally:
-		return key
 
 if __name__ == "__main__":
 	try:
