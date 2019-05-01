@@ -25,13 +25,13 @@ class SimpleMFRC522:
     id = False
     i = 0
     id = self.read_id_no_block()
-    while i < 10:
+    while i < 5:
       if(id):
         return id
       else:
         id = self.read_id_no_block()
         i += 1
-        time.sleep(1)
+    return False
 
 
   def read_id_no_block(self):
