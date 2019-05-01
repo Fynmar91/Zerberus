@@ -1,5 +1,6 @@
 # Code by Simon Monk https://github.com/simonmonk/
 
+import time
 import MFRC522
 import RPi.GPIO as GPIO
 
