@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	Zerberus v1.3
-#	Yannik Seitz 30.04.19
+#	Zerberus v1.4
+#	Yannik Seitz 01.05.19
 #	Dieses Programm verarbeitet eingelesene RFID-tagIDs und ueberprueft ob sie zugangsberechtigt sind
 #	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt
 
@@ -112,28 +112,14 @@ class SQL:
 		db.close()
 
 	def Query(self, query, variable): # SQL Anfrage
+		result = False
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
 		curser.execute(query, (variable,))
 		result = curser.fetchone()
 		db.commit()
 		db.close()
-		if(result):
-			return result
-		else:
-			return False
-
-	def GetLogs(self): # SQL Anfrage
-		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
-		curser = db.cursor()
-		curser.execute("SELECT * FROM Logs")
-		result = curser.fetchall()
-		db.commit()
-		db.close()
-		if(result):
-			return result
-		else:
-			return False
+		return result
 
 	def DelLogs(self): # SQL Anfrage
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
@@ -164,17 +150,6 @@ class Mail:
 		self.password = config.get('EMAIL', 'Passwort')
 		self.port = config.getint('EMAIL', 'Port')
 		self.smtp = config.get('EMAIL', 'smtpAdresse')
-
-	def SendArchive(self, logs, subject): # Email senden
-		list = ''
-		for tuple in logs:
-			list = '{}\n\n{}'.format(list, tuple)
-		message = 'Subject: {}\n\n{}'.format(subject, list)
-
-		context = ssl.create_default_context()
-		server = smtplib.SMTP_SSL(self.smtp, self.port)
-		server.login(self.address, self.password)
-		server.sendmail(self.address, self.address, message)
 
 	def SendError(self, error, subject): # Email senden
 		error = '{}\n\n{}'.format(error,'!!Geraet wird neu gestartet!!')
