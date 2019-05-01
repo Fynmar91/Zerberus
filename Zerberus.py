@@ -234,6 +234,7 @@ if __name__ == "__main__":
 		main()
 
 	except Exception as error:
+		print(error)
 		mail = Mail()
 		mail.SendError(error, 'ZERBERUS ERROR:')
 		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
