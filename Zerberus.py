@@ -3,7 +3,8 @@
 #	Projekt: Zerberus FS2V Zugangskontrolle
 #	Zerberus v1.4
 #	Yannik Seitz 01.05.19
-#	Dieses Programm verarbeitet eingelesene RFID-tagIDs und ueberprueft ob sie zugangsberechtigt sind
+#	Wird dieses Programm direkt ausgefuehrt erstellt es ein Objekt fuer einen RFID-Reader und eine Tuer-Kontrolle. Danach wird eine Endlosschleife gestartet.
+#	In der Schleife wird abwechselnd versucht ein RFID-Schluessel zu finden oder kontrolliert ob die Tuer uber das Web-Interface geoeffnet werden soll.
 #	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt
 
 import time
@@ -15,9 +16,14 @@ import MySQLdb
 import SimpleMFRC522
 import ConfigParser
 
+
+# ================================================================================
+#				Main
+# Objekte werden erstellt; Endlosschleife 
+# ================================================================================
 def main():
 	i = 0
-	door = Door()
+	door = DoorControlControl()
 	reader = SimpleMFRC522.SimpleMFRC522()
 	while True:
 		key = False
@@ -25,7 +31,7 @@ def main():
 		key = reader.read_id() # RFID-Karte einlesen
 		if(key):
 			door.Open(key)
-		elif(i < 10):
+		elif(i < 5):
 			i = i + 1
 			print(i)
 		else:
@@ -33,7 +39,28 @@ def main():
 			i = 0
 			print('go')
 
-class Door:
+
+# ================================================================================
+#				Klasse: DoorControl
+# Kontrolliert das Relais und die LEDs
+# Erstellt eine SQL-Objekt
+
+# Open() ueberprueft ob der mitgegeben Schluessel zugangsberechtigt ist
+# Input: RFID-ID | Output:
+
+# ManualOpen() oeffnet die Tuer sollte eine Aufforderung in der Datenbank vorhanden sein
+# Input:  | Output:
+
+# Granted() schaltet das Relais ueber GPIO um die Tuer zu oeffnen
+# Input:  | Output:
+
+# Unknown() laesst die rote LED kurz leuchten
+# Input:  | Output:
+
+# Denied() laesst die rote LED blinken
+# Input:  | Output:
+# ================================================================================
+class DoorControl:
 	def __init__(self):
 		config = ConfigParser.RawConfigParser()
 		config.read('config.ini')
@@ -81,6 +108,25 @@ class Door:
 			GPIO.output(17,GPIO.LOW)
 			time.sleep(0.05)
 
+
+# ================================================================================
+#				Klasse: SQL
+
+# CheckPermission() prueft ob ein RFID-Schluessel zugriff zu einem Raum hat
+# Input: RFID-ID ; Raumnummer | Output: Ereignis (Event 1 = Zugang erlaubt ; Event 0 = Zugang verweigert ; Event 2 = Unbekannt)
+
+# Log() protokolliert ein Ereignis
+# Input:  | Output:
+
+# Query() stellt eine Abfrage an den SQL-Server
+# Input:  | Output:
+
+# DelLogs() loescht alle Logs
+# Input:  | Output:
+
+# CheckManualAccess() prueft ob ein Raum durch das Interface geoeffnet werden soll
+# Input:  | Output:
+# ================================================================================
 class SQL:
 	def __init__(self):
 		config = ConfigParser.RawConfigParser()
@@ -90,28 +136,36 @@ class SQL:
 		self.password = config.get('SQL', 'Passwort')
 		self.database = config.get('SQL', 'DatenbankName')
 
-	def CheckPermission(self, key, number):	# Zungangsberechtigung kontrollieren
+	# Zungangsberechtigung kontrollieren
+	def CheckPermission(self, key, number):
 		User = self.Query("SELECT * FROM Users WHERE tagID = %s", key)
 		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", number)
 		event = 2
 		if(User and Room):
-			if(User[6] >= Room[6]):	# User[6] = Prio; Room[6] = Prio
-				event = 1 # Event 1; Zugang erlaubt
+			# User[6] = Prio; Room[6] = Prio
+			if(User[6] >= Room[6]):
+				# Event 1 = Zugang erlaubt
+				event = 1
 			else:
-				event = 0 # Event 0; Zugang verweigert
+				# Event 0 = Zugang verweigert
+				event = 0
 		elif(User == False and Room):
-			event = 2 # Event 2; Unbekannt
-		self.Log(event, key, number, User[1]) # Event protokollieren
+			# Event 2 = Unbekannt
+			event = 2
+		# Event protokollieren
+		self.Log(event, key, number, User[1]) 
 		return event
 
-	def Log(self, event, key, number, name):	# Event protokollieren
+	# Event protokollieren
+	def Log(self, event, key, number, name):
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
 		curser.execute("INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())", (event, key, number, name))
 		db.commit()
 		db.close()
 
-	def Query(self, query, variable): # SQL Anfrage
+	# SQL Anfrage
+	def Query(self, query, variable):
 		result = False
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
@@ -121,27 +175,37 @@ class SQL:
 		db.close()
 		return result
 
-	def DelLogs(self): # SQL Anfrage
+	# SQL Anfrage
+	def DelLogs(self):
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
 		curser.execute("DELETE FROM Logs")
 		db.commit()
 		db.close()
 
-	def CheckManualAccess(self, number):	# Prueft ob openFlag gesetzt wurde
+	# Prueft ob openFlag gesetzt wurde
+	def CheckManualAccess(self, number):
 		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", number)
 		if(Room):
-			if(Room[7] == 1):	# Room[7] = Rooms; openFlag
+			# Room[7] = Rooms; openFlag
+			if(Room[7] == 1):
 				self.ResetOpenFlag(number)
 				return True
 
-	def ResetOpenFlag(self, number):	# Setzt openFlag des Raums auf 0
+	# Setzt openFlag des Raums auf 0
+	def ResetOpenFlag(self, number):
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
 		curser.execute("UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s", (number,))
 		db.commit()
 		db.close()
 
+# ================================================================================
+#				Klasse: Mail
+
+# SendError() protokolliert ein Ereignis
+# Input: Error ;  Betreff| Output:
+# ================================================================================
 class Mail:
 	def __init__(self):
 		config = ConfigParser.RawConfigParser()
@@ -160,6 +224,9 @@ class Mail:
 		server.login(self.address, self.password)
 		server.sendmail(self.address, self.address, message)
 
+# ================================================================================
+#				Ausfuehren als __main__
+# ================================================================================
 if __name__ == "__main__":
 	try:
 		main()
@@ -167,12 +234,4 @@ if __name__ == "__main__":
 	except Exception as error:
 		mail = Mail()
 		mail.SendError(error, 'ZERBERUS ERROR:')
-		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
-else:
-	try:
-		manual()
-
-	except Exception as error:
-		mail = Mail()
-		mail.SendError(error, 'PUPPY ERROR:')
 		subprocess.call('/home/pi/Zerberus/Restart', shell=True)

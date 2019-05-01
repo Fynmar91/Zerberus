@@ -17,7 +17,7 @@ def main():
 	mail = Mail()
 	logs = sql.GetLogs()
 	mail.SendArchive(logs, 'Logarchiv:')
-	#sql.DelLogs()
+	sql.DelLogs()
 
 class SQL:
 	def __init__(self):
