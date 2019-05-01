@@ -27,9 +27,12 @@ def main():
 	reader = SimpleMFRC522.SimpleMFRC522()
 	while True:
 		key = False
-		GPIO.output(22,GPIO.HIGH) # Status LED Gruen
-		key = reader.read_id() # RFID-Karte einlesen
+		# Status LED Gruen
+		GPIO.output(22,GPIO.HIGH)
+		# RFID-Karte einlesen
+		key = reader.read_id()
 		if(key):
+			# Versuche Tuer zu oeffnen
 			door.Open(key)
 		elif(i < 5):
 			i = i + 1
@@ -66,28 +69,40 @@ class DoorControl:
 		config.read('/home/pi/Zerberus/config.ini')
 		self.number = config.get('ROOM', 'Raumnummer')
 		self.sql = SQL()
+
+		# GPIO in BCM mode
 		GPIO.setwarnings(False)
-		GPIO.setmode(GPIO.BCM) # GPIO in BCM mode
-		GPIO.setup(17,GPIO.OUT) # Rot
-		GPIO.setup(18,GPIO.OUT) # Tueroeffner
-		GPIO.setup(22,GPIO.OUT) # Gruen
-		GPIO.output(18,GPIO.HIGH) # Relais schliesst bei low
+		GPIO.setmode(GPIO.BCM) 
+		# Rot
+		GPIO.setup(17,GPIO.OUT) 
+		# Tueroeffner
+		GPIO.setup(18,GPIO.OUT) 
+		# Gruen
+		GPIO.setup(22,GPIO.OUT) 
+		# Relais schliesst bei low
+		GPIO.output(18,GPIO.HIGH) 
 
 	def Open(self, key):
-		event = self.sql.CheckPermission(key, self.number) # Zungangsberechtigung kontrollieren
+		# Zungangsberechtigung kontrollieren
+		event = self.sql.CheckPermission(key, self.number) 
 		if(event == 1):
-			self.Granted() # Event 1; Zugang erlaubt; Tuer oeffnen
+			# Event 1 = Zugang erlaubt; Tuer oeffnen
+			self.Granted() 
 		elif(event == 0):
-			self.Denied() # Event 0; Kein Zugang; rote LED blinkt
+			# Event 0 = Kein Zugang; rote LED blinkt
+			self.Denied() 
 		elif(event == 2):
-			self.Unknown() # Event 2; Unbekannt; rote LED
+			# Event 2 = Unbekannt; rote LED
+			self.Unknown() 
 
-	def ManualOpen(self): # Prueft ob openFlag gesetzt wurde
+	# Prueft ob openFlag gesetzt wurde
+	def ManualOpen(self):
 		if(self.sql.CheckManualAccess(self.number)):
-			self.Granted() # Tuer oeffnen
+			# Tuer oeffnen
+			self.Granted()
 
-
-	def Granted(self): # Tuer oeffnen
+	# Tuer oeffnen
+	def Granted(self):
 		GPIO.output(18,GPIO.LOW)
 		for i in range(10):
 			GPIO.output(22,GPIO.HIGH)
@@ -96,12 +111,14 @@ class DoorControl:
 			time.sleep(0.1)
 		GPIO.output(18,GPIO.HIGH)
 
-	def Unknown(self): # Unbekannt; rote LED
+	# Unbekannt; rote LED
+	def Unknown(self):
 		GPIO.output(17,GPIO.HIGH)
 		time.sleep(1)
 		GPIO.output(17,GPIO.LOW)
 
-	def Denied(self): # Kein Zugang; rote LED blinkt
+	# Kein Zugang; rote LED blinkt
+	def Denied(self):
 		for i in range(10):
 			GPIO.output(17,GPIO.HIGH)
 			time.sleep(0.05)
@@ -119,13 +136,13 @@ class DoorControl:
 # Input:  | Output:
 
 # Query() stellt eine Abfrage an den SQL-Server
-# Input:  | Output:
+# Input:  | Output: Ergebnis der Abfrage
 
 # DelLogs() loescht alle Logs
 # Input:  | Output:
 
 # CheckManualAccess() prueft ob ein Raum durch das Interface geoeffnet werden soll
-# Input:  | Output:
+# Input:  | Output: True/False
 # ================================================================================
 class SQL:
 	def __init__(self):
@@ -205,7 +222,7 @@ class SQL:
 #				Klasse: Mail
 
 # SendError() protokolliert ein Ereignis
-# Input: Error ;  Betreff| Output:
+# Input: Error ;  Betreff | Output:
 # ================================================================================
 class Mail:
 	def __init__(self):
@@ -216,7 +233,8 @@ class Mail:
 		self.port = config.getint('EMAIL', 'Port')
 		self.smtp = config.get('EMAIL', 'smtpAdresse')
 
-	def SendError(self, error, subject): # Email senden
+	# Error per Email senden
+	def SendError(self, error, subject):
 		error = '{}\n\n{}'.format(error,'!!Geraet wird neu gestartet!!')
 		message = 'Subject: {}\n\n{}'.format(subject, error)
 
