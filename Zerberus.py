@@ -26,7 +26,7 @@ def main():
 		if(key):
 			door.Open(key)
 		elif(i < 10):
-			i =+ 1
+			i = i + 1
 			print(i)
 		else:
 			door.ManualOpen()

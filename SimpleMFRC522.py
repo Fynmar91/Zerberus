@@ -30,7 +30,7 @@ class SimpleMFRC522:
         return id
       else:
         id = self.read_id_no_block()
-        i += 1
+        i = i + 1
     return False
 
 
