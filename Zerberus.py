@@ -18,9 +18,11 @@ def main():
 	while True:
 		key = False
 		GPIO.output(22,GPIO.HIGH) # Status LED Gruen
-		key = ReadRFID() # RFID-Karte einlesen		
-		door.Open(key)
-
+		key = ReadRFID() # RFID-Karte einlesen
+		if(key):
+			door.Open(key)
+		else:
+			pass
 
 def manual():
 	door = class_door.Door()
@@ -31,7 +33,7 @@ def manual():
 def ReadRFID():	# RFID-Karte einlesen
 	reader = SimpleMFRC522.SimpleMFRC522()
 	try:
-		key, text = reader.read_id()
+		key = reader.read_id()
 	finally:
 		return key
 
