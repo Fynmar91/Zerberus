@@ -23,7 +23,7 @@ import ConfigParser
 # ================================================================================
 def main():
 	i = 0
-	door = DoorControlControl()
+	door = DoorControl()
 	reader = SimpleMFRC522.SimpleMFRC522()
 	while True:
 		key = False
