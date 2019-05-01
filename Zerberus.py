@@ -200,6 +200,7 @@ class SQL:
 		db.commit()
 		db.close()
 
+
 # ================================================================================
 #				Klasse: Mail
 
@@ -223,6 +224,7 @@ class Mail:
 		server = smtplib.SMTP_SSL(self.smtp, self.port)
 		server.login(self.address, self.password)
 		server.sendmail(self.address, self.address, message)
+
 
 # ================================================================================
 #				Ausfuehren als __main__
