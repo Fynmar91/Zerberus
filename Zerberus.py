@@ -16,10 +16,10 @@ import SimpleMFRC522
 import ConfigParser
 
 def main():
+	i = 0
 	door = Door()
 	reader = SimpleMFRC522.SimpleMFRC522()
 	while True:
-		i = 0
 		key = False
 		GPIO.output(22,GPIO.HIGH) # Status LED Gruen
 		key = reader.read_id() # RFID-Karte einlesen
@@ -30,6 +30,7 @@ def main():
 			print(i)
 		else:
 			door.ManualOpen()
+			i = 0
 			print('go')
 
 class Door:
