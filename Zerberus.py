@@ -19,19 +19,18 @@ def main():
 	door = Door()
 	reader = SimpleMFRC522.SimpleMFRC522()
 	while True:
+		i = 0
 		key = False
 		GPIO.output(22,GPIO.HIGH) # Status LED Gruen
 		key = reader.read_id() # RFID-Karte einlesen
 		if(key):
 			door.Open(key)
+		elif(i < 10):
+			i =+ 1
+			print(i)
 		else:
-			print('ok')
-
-def manual():
-	door = Door()
-	while True:
-		door.ManualOpen()
-		time.sleep(5)
+			door.ManualOpen()
+			print('go')
 
 class Door:
 	def __init__(self):
