@@ -63,7 +63,7 @@ def main():
 class DoorControl:
 	def __init__(self):
 		config = ConfigParser.RawConfigParser()
-		config.read('config.ini')
+		config.read('/home/pi/Zerberus/config.ini')
 		self.number = config.get('ROOM', 'Raumnummer')
 		self.sql = SQL()
 		GPIO.setwarnings(False)
