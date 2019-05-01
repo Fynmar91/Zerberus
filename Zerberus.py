@@ -22,7 +22,7 @@ def main():
 		if(key):
 			door.Open(key)
 		else:
-			pass
+			print('ok')
 
 def manual():
 	door = class_door.Door()
