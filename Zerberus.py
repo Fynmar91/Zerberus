@@ -130,7 +130,7 @@ class DoorControl:
 class SQL:
 	def __init__(self):
 		config = ConfigParser.RawConfigParser()
-		config.read('config.ini')
+		config.read('/home/pi/Zerberus/config.ini')
 		self.ip = config.get('SQL', 'IP')
 		self.user = config.get('SQL', 'Nutzer')
 		self.password = config.get('SQL', 'Passwort')
@@ -210,7 +210,7 @@ class SQL:
 class Mail:
 	def __init__(self):
 		config = ConfigParser.RawConfigParser()
-		config.read('config.ini')
+		config.read('/home/pi/Zerberus/config.ini')
 		self.address = config.get('EMAIL', 'Adresse')
 		self.password = config.get('EMAIL', 'Passwort')
 		self.port = config.getint('EMAIL', 'Port')
