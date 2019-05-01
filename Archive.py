@@ -7,12 +7,12 @@
 
 import time
 import subprocess
-import class_mail
-import class_sql
+import MailControl
+import SqlControl
 
 def main():
-	sql = class_sql.SQL()
-	mail = class_mail.Mail()
+	sql = SqlControl.SQL()
+	mail = MailControl.Mail()
 	logs = sql.GetLogs()
 	mail.SendArchive(logs, 'Logarchiv:')
 	sql.DelLogs()

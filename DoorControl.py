@@ -7,14 +7,14 @@ import time
 import ConfigParser
 import MySQLdb
 import RPi.GPIO as GPIO
-import class_sql
+import SqlControl
 
 class Door:
 	def __init__(self):
 		config = ConfigParser.RawConfigParser()
 		config.read('config.ini')
 		self.number = config.get('ROOM', 'Raumnummer')
-		self.sql = class_sql.SQL()
+		self.sql = SqlControl.SQL()
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM) # GPIO in BCM mode
 		GPIO.setup(17,GPIO.OUT) # Rot
