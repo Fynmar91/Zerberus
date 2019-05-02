@@ -269,7 +269,7 @@ class Mail:
 
 
 # ================================================================================
-#				Ausfuehren als __main__
+#				ausfuehren als __main__
 # ================================================================================
 if __name__ == "__main__":
 	try:
@@ -282,14 +282,14 @@ if __name__ == "__main__":
 		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
 
 # ================================================================================
-#				Ausfuehren als Archive
+#				extern ausfuehren = Archive
 # ================================================================================
-else:
+elif __name__ == "Zerberus":
 	try:
 		sql = SQL()
 		mail = Mail()
 		logs = sql.GetLogs()
-		mail.SendArchive(logs, __name__)
+		mail.SendArchive(logs, 'Logarchiv:')
 		sql.DelLogs()
 
 	except Exception as error:
