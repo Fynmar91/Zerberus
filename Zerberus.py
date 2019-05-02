@@ -192,14 +192,6 @@ class SQL:
 		db.close()
 		return result
 
-	# SQL Anfrage
-	def DelLogs(self):
-		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
-		curser = db.cursor()
-		curser.execute("DELETE FROM Logs")
-		db.commit()
-		db.close()
-
 	# Prueft ob openFlag gesetzt wurde
 	def CheckManualAccess(self, number):
 		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", number)
@@ -217,6 +209,24 @@ class SQL:
 		db.commit()
 		db.close()
 
+	# SQL Anfrage
+	def GetLogs(self):
+		result = False
+		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
+		curser = db.cursor()
+		curser.execute("SELECT * FROM Logs")
+		result = curser.fetchall()
+		db.commit()
+		db.close()
+		return result
+
+	# SQL Anfrage
+	def DelLogs(self):
+		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
+		curser = db.cursor()
+		curser.execute("DELETE FROM Logs")
+		db.commit()
+		db.close()
 
 # ================================================================================
 #				Klasse: Mail
@@ -232,6 +242,18 @@ class Mail:
 		self.password = config.get('EMAIL', 'Passwort')
 		self.port = config.getint('EMAIL', 'Port')
 		self.smtp = config.get('EMAIL', 'smtpAdresse')
+
+	# Email senden
+	def SendArchive(self, logs, subject):
+		list = ''
+		for tuple in logs:
+			list = '{}\n\n{}'.format(list, tuple)
+		message = 'Subject: {}\n\n{}'.format(subject, list)
+
+		context = ssl.create_default_context()
+		server = smtplib.SMTP_SSL(self.smtp, self.port)
+		server.login(self.address, self.password)
+		server.sendmail(self.address, self.address, message)
 
 	# Error per Email senden
 	def SendError(self, error, subject):
@@ -256,3 +278,18 @@ if __name__ == "__main__":
 		mail = Mail()
 		mail.SendError(error, 'ZERBERUS ERROR:')
 		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
+
+# ================================================================================
+#				Ausfuehren als Archive
+# ================================================================================
+else:
+	try:
+		sql = SQL()
+		mail = Mail()
+		logs = sql.GetLogs()
+		mail.SendArchive(logs, 'Logarchiv:')
+		sql.DelLogs()
+
+	except Exception as error:
+		mail = Mail()
+		mail.SendError(error, 'ARCHIVE ERROR:')
