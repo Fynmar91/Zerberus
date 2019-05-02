@@ -4,7 +4,6 @@
 #	modified SimpleMFRC522 v1.2
 #	Yannik Seitz 01.05.19
 
-import time
 import MFRC522
 import RPi.GPIO as GPIO
 

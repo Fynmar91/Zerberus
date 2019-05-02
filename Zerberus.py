@@ -39,12 +39,10 @@ def main():
 		elif(i < 5):
 			# 5 mal hochzaehlen
 			i = i + 1
-			print(i)
 		else:
 			# Pruefe ob ueber Web-Interface geoeffnet wurde
 			door.ManualOpen()
 			i = 0
-			print('go')
 
 
 # ================================================================================
