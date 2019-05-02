@@ -7,6 +7,8 @@
 #	In der Schleife wird abwechselnd versucht ein RFID-Schluessel zu finden oder kontrolliert ob die Tuer uber das Web-Interface geoeffnet werden soll.
 #	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt
 
+#	Wird das Programm extern importiert holt es sich alle Logs aus der SQL-Datenbank und verschickt sie per eMail. Die Logs werden danach geloescht.
+
 import time
 import subprocess
 import smtplib
@@ -287,7 +289,7 @@ else:
 		sql = SQL()
 		mail = Mail()
 		logs = sql.GetLogs()
-		mail.SendArchive(logs, 'Logarchiv:')
+		mail.SendArchive(logs, 'Logarchiv: __name__')
 		sql.DelLogs()
 
 	except Exception as error:
