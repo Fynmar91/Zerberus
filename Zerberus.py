@@ -37,9 +37,11 @@ def main():
 			# Versuche Tuer zu oeffnen
 			door.Open(key)
 		elif(i < 5):
+			# 5 mal hochzaehlen
 			i = i + 1
 			print(i)
 		else:
+			# Pruefe ob ueber Web-Interface geoeffnet wurde
 			door.ManualOpen()
 			i = 0
 			print('go')
@@ -198,7 +200,7 @@ class SQL:
 	def CheckManualAccess(self, number):
 		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", number)
 		if(Room):
-			# Room[7] = Rooms; openFlag
+			# Room[7] = openFlag
 			if(Room[7] == 1):
 				self.ResetOpenFlag(number)
 				return True
