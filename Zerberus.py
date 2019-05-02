@@ -48,7 +48,7 @@ def main():
 # ================================================================================
 #				Klasse: DoorControl
 # Kontrolliert das Relais und die LEDs
-# Erstellt eine SQL-Objekt
+# Erstellt ein SQL-Objekt
 
 # Open() ueberprueft ob der mitgegeben Schluessel zugangsberechtigt ist
 # Input: RFID-ID | Output:
@@ -130,6 +130,7 @@ class DoorControl:
 
 # ================================================================================
 #				Klasse: SQL
+# Fuehrt SQL-Abfragen durch, schreibt Ereignissprotokolle und setzt die openFalg zurueck
 
 # CheckPermission() prueft ob ein RFID-Schluessel zugriff zu einem Raum hat
 # Input: RFID-ID ; Raumnummer | Output: Ereignis (Event 1 = Zugang erlaubt ; Event 0 = Zugang verweigert ; Event 2 = Unbekannt)
@@ -232,6 +233,7 @@ class SQL:
 
 # ================================================================================
 #				Klasse: Mail
+# Verschickt Fehlermeldungen und Protokolle
 
 # SendError() protokolliert ein Ereignis
 # Input: Error ;  Betreff | Output:
