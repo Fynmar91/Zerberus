@@ -289,7 +289,7 @@ else:
 		sql = SQL()
 		mail = Mail()
 		logs = sql.GetLogs()
-		mail.SendArchive(logs, 'Logarchiv: __name__')
+		mail.SendArchive(logs, __name__)
 		sql.DelLogs()
 
 	except Exception as error:
