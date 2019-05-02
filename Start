@@ -1,5 +1,3 @@
 #!/bin/sh
 sudo killall python
-python /home/pi/Zerberus/aWatchdog.py &
-python /home/pi/Zerberus/mWatchdog.py &
-
+python /home/pi/Zerberus/Zerberus.py &

@@ -1,11 +1,17 @@
 # Code by Simon Monk https://github.com/simonmonk/
 
+#	Projekt: Zerberus FS2V Zugangskontrolle
+#	modified SimpleMFRC522 v1.2
+#	Yannik Seitz 01.05.19
+
+import time
 import MFRC522
 import RPi.GPIO as GPIO
 
 class SimpleMFRC522:
 
   READER = None
+
 
   KEY = [0xFF,0xFF,0xFF,0xFF,0xFF,0xFF]
   BLOCK_ADDRS = [8, 9, 10]
@@ -20,10 +26,17 @@ class SimpleMFRC522:
       return id, text
 
   def read_id(self):
+    id = False
+    i = 0
     id = self.read_id_no_block()
-    while not id:
-      id = self.read_id_no_block()
-    return id
+    while i < 5:
+      if(id):
+        return id
+      else:
+        id = self.read_id_no_block()
+        i = i + 1
+    return False
+
 
   def read_id_no_block(self):
       (status, TagType) = self.READER.MFRC522_Request(self.READER.PICC_REQIDL)
