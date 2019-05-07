@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	Zerberus v1.4
-#	Yannik Seitz 01.05.19
+#	Zerberus v1.5
+#	Yannik Seitz 02.05.19
 #	Wird dieses Programm direkt ausgefuehrt erstellt es ein Objekt fuer einen RFID-Reader und eine Tuer-Kontrolle. Danach wird eine Endlosschleife gestartet.
 #	In der Schleife wird abwechselnd versucht ein RFID-Schluessel zu finden oder kontrolliert ob die Tuer uber das Web-Interface geoeffnet werden soll.
 #	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt
+
+#	Wird das Programm extern importiert holt es sich alle Logs aus der SQL-Datenbank und verschickt sie per eMail. Die Logs werden danach geloescht.
 
 import time
 import subprocess
@@ -35,18 +37,18 @@ def main():
 			# Versuche Tuer zu oeffnen
 			door.Open(key)
 		elif(i < 5):
+			# 5 mal hochzaehlen
 			i = i + 1
-			print(i)
 		else:
+			# Pruefe ob ueber Web-Interface geoeffnet wurde
 			door.ManualOpen()
 			i = 0
-			print('go')
 
 
 # ================================================================================
 #				Klasse: DoorControl
 # Kontrolliert das Relais und die LEDs
-# Erstellt eine SQL-Objekt
+# Erstellt ein SQL-Objekt
 
 # Open() ueberprueft ob der mitgegeben Schluessel zugangsberechtigt ist
 # Input: RFID-ID | Output:
@@ -128,6 +130,7 @@ class DoorControl:
 
 # ================================================================================
 #				Klasse: SQL
+# Fuehrt SQL-Abfragen durch, schreibt Ereignissprotokolle und setzt die openFalg zurueck
 
 # CheckPermission() prueft ob ein RFID-Schluessel zugriff zu einem Raum hat
 # Input: RFID-ID ; Raumnummer | Output: Ereignis (Event 1 = Zugang erlaubt ; Event 0 = Zugang verweigert ; Event 2 = Unbekannt)
@@ -192,19 +195,11 @@ class SQL:
 		db.close()
 		return result
 
-	# SQL Anfrage
-	def DelLogs(self):
-		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
-		curser = db.cursor()
-		curser.execute("DELETE FROM Logs")
-		db.commit()
-		db.close()
-
 	# Prueft ob openFlag gesetzt wurde
 	def CheckManualAccess(self, number):
 		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", number)
 		if(Room):
-			# Room[7] = Rooms; openFlag
+			# Room[7] = openFlag
 			if(Room[7] == 1):
 				self.ResetOpenFlag(number)
 				return True
@@ -217,9 +212,28 @@ class SQL:
 		db.commit()
 		db.close()
 
+	# SQL Anfrage
+	def GetLogs(self):
+		result = False
+		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
+		curser = db.cursor()
+		curser.execute("SELECT * FROM Logs")
+		result = curser.fetchall()
+		db.commit()
+		db.close()
+		return result
+
+	# SQL Anfrage
+	def DelLogs(self):
+		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
+		curser = db.cursor()
+		curser.execute("DELETE FROM Logs")
+		db.commit()
+		db.close()
 
 # ================================================================================
 #				Klasse: Mail
+# Verschickt Fehlermeldungen und Protokolle
 
 # SendError() protokolliert ein Ereignis
 # Input: Error ;  Betreff | Output:
@@ -233,6 +247,18 @@ class Mail:
 		self.port = config.getint('EMAIL', 'Port')
 		self.smtp = config.get('EMAIL', 'smtpAdresse')
 
+	# Email senden
+	def SendArchive(self, logs, subject):
+		list = ''
+		for tuple in logs:
+			list = '{}\n\n{}'.format(list, tuple)
+		message = 'Subject: {}\n\n{}'.format(subject, list)
+
+		context = ssl.create_default_context()
+		server = smtplib.SMTP_SSL(self.smtp, self.port)
+		server.login(self.address, self.password)
+		server.sendmail(self.address, self.address, message)
+
 	# Error per Email senden
 	def SendError(self, error, subject):
 		error = '{}\n\n{}'.format(error,'!!Geraet wird neu gestartet!!')
@@ -245,7 +271,7 @@ class Mail:
 
 
 # ================================================================================
-#				Ausfuehren als __main__
+#				ausfuehren als __main__
 # ================================================================================
 if __name__ == "__main__":
 	try:
@@ -256,3 +282,18 @@ if __name__ == "__main__":
 		mail = Mail()
 		mail.SendError(error, 'ZERBERUS ERROR:')
 		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
+
+# ================================================================================
+#				extern ausfuehren = Archive
+# ================================================================================
+elif __name__ == "Zerberus":
+	try:
+		sql = SQL()
+		mail = Mail()
+		logs = sql.GetLogs()
+		mail.SendArchive(logs, 'Logarchiv:')
+		sql.DelLogs()
+
+	except Exception as error:
+		mail = Mail()
+		mail.SendError(error, 'ARCHIVE ERROR:')
