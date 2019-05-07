@@ -36,6 +36,12 @@ class SimpleMFRC522:
         i = i + 1
     return False
 
+  def read_id_Cont(self):
+      id = self.read_id_no_block()
+      while not id:
+          id = self.read_id_no_block()
+      return id
+
 
   def read_id_no_block(self):
       (status, TagType) = self.READER.MFRC522_Request(self.READER.PICC_REQIDL)
