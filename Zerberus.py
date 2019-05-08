@@ -27,23 +27,33 @@ def main():
 	i = 0
 	door = DoorControl()
 	reader = SimpleMFRC522.SimpleMFRC522()
-	while True:
-		key = False
-		# Status LED Gruen
-		GPIO.output(22,GPIO.HIGH)
-		# RFID-Karte einlesen
-		key = reader.read_id()
-		if(key):
-			# Versuche Tuer zu oeffnen
-			door.Open(key)
-		elif(i < 5):
-			# 5 mal hochzaehlen
-			i = i + 1
-		else:
-			# Pruefe ob ueber Web-Interface geoeffnet wurde
-			door.ManualOpen()
-			i = 0
 
+	if(door.manual == 0):
+		while True:
+			key = False
+			# Status LED Gruen
+			GPIO.output(22,GPIO.HIGH)
+			# RFID-Karte einlesen
+			key = reader.read_id_Cont()
+			door.Open(key)
+		
+	else:
+		while True:
+			key = False
+			# Status LED Gruen
+			GPIO.output(22,GPIO.HIGH)
+			# RFID-Karte einlesen
+			key = reader.read_id()
+			if(key):
+				# Versuche Tuer zu oeffnen
+				door.Open(key)
+			elif(i < 5):
+				# 5 mal hochzaehlen
+				i = i + 1
+			else:
+				# Pruefe ob ueber Web-Interface geoeffnet wurde
+				door.ManualOpen()
+				i = 0
 
 # ================================================================================
 #				Klasse: DoorControl
@@ -70,6 +80,7 @@ class DoorControl:
 		config = ConfigParser.RawConfigParser()
 		config.read('/home/pi/Zerberus/config.ini')
 		self.number = config.get('ROOM', 'Raumnummer')
+		self.manual = config.get('ROOM', 'WebOeffner')
 		self.sql = SQL()
 
 		# GPIO in BCM mode
