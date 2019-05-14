@@ -248,8 +248,12 @@ class SQL:
 
 	# Eigene IP finden
 	def get_ip(self):
-		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		return socket.inet_ntoa(fcntl.ioctl(s.fileno(),	0x8915, struct.pack('256s', 'eth0'[:15]))[20:24])
+		try:
+			IP = socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', 'eth0'[:15]))[20:24])
+		except:
+			IP = 'NULL'
+		finally:
+			return IP
 
 	# Schreibt eigene IP in die Datenbank
 	def SetIP(self, roomNr):
