@@ -313,5 +313,6 @@ def Archive():
 		mail.SendError(error, 'ARCHIVE ERROR:')
 
 def Manual():
+	print('test')
 	door1 = DoorControl()
 	door1.ManualOpen()
