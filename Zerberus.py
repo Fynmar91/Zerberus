@@ -260,7 +260,7 @@ class SQL:
 	# Schreibt eigene IP in die Datenbank
 	def SetIP(self):
 		print('setIP')
-		IP = get_ip()
+		IP = self.get_ip()
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
 		curser.execute("UPDATE Rooms SET openFlag = 0 WHERE IP = %s", (IP,))
