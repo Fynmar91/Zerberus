@@ -315,3 +315,5 @@ def Archive():
 def Manual():
 	door1 = DoorControl()
 	door1.ManualOpen()
+	# Status LED Gruen
+	GPIO.output(22,GPIO.HIGH)
