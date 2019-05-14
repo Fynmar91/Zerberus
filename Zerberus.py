@@ -83,7 +83,7 @@ class DoorControl:
 		self.roomNumber = config.get('ROOM', 'Raumnummer')
 		self.manual = config.get('ROOM', 'WebOeffner')
 		self.sql = SQL()
-		self.sql.SetIP(roomNumber)
+		self.sql.SetIP(self.roomNumber)
 
 		# GPIO in BCM mode
 		GPIO.setwarnings(False)
