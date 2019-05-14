@@ -173,8 +173,8 @@ class SQL:
 
 	# Zungangsberechtigung kontrollieren
 	def CheckPermission(self, key, roomNumber):
-		User = self.Query("SELECT * FROM Users WHERE tagID = %s", key)
-		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", roomNumber)
+		User = self.Query('SELECT * FROM Users WHERE tagID = %s', key)
+		Room = self.Query('SELECT * FROM Rooms WHERE roomNr = %s', roomNumber)
 		event = 2
 		if(User and Room):
 			# User[6] = Prio; Room[6] = Prio
@@ -195,7 +195,7 @@ class SQL:
 	def Log(self, event, key, roomNumber, name):
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
-		curser.execute("INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())", (event, key, roomNumber, name))
+		curser.execute('INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())', (event, key, roomNumber, name))
 		db.commit()
 		db.close()
 
@@ -212,7 +212,7 @@ class SQL:
 
 	# Prueft ob openFlag gesetzt wurde
 	def CheckManualAccess(self, roomNumber):
-		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", roomNumber)
+		Room = self.Query('SELECT * FROM Rooms WHERE roomNr = %s', roomNumber)
 		if(Room):
 			# Room[7] = openFlag
 			if(Room[7] == 1):
@@ -223,7 +223,7 @@ class SQL:
 	def ResetOpenFlag(self, roomNr):
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
-		curser.execute("UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s", (roomNr,))
+		curser.execute('UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s', (roomNr,))
 		db.commit()
 		db.close()
 
@@ -232,7 +232,7 @@ class SQL:
 		result = False
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
-		curser.execute("SELECT * FROM Logs")
+		curser.execute('SELECT * FROM Logs')
 		result = curser.fetchall()
 		db.commit()
 		db.close()
@@ -242,7 +242,7 @@ class SQL:
 	def DelLogs(self):
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
-		curser.execute("DELETE FROM Logs")
+		curser.execute('DELETE FROM Logs')
 		db.commit()
 		db.close()
 
@@ -253,11 +253,10 @@ class SQL:
 
 	# Schreibt eigene IP in die Datenbank
 	def SetIP(self, roomNr):
-		print('setIP')
 		IP = self.get_ip()
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
-		curser.execute("UPDATE Rooms SET IP = %s WHERE RoomNr = %s", (IP ,roomNr))
+		curser.execute('UPDATE Rooms SET IP = %s WHERE RoomNr = %s', (IP ,roomNr))
 		db.commit()
 		db.close()
 
@@ -303,7 +302,7 @@ class Mail:
 # ================================================================================
 #				ausfuehren als __main__
 # ================================================================================
-if __name__ == "__main__":
+if __name__ == '__main__':
 	try:
 		main()
 
