@@ -168,7 +168,6 @@ class SQL:
 		self.user = config.get('SQL', 'Nutzer')
 		self.password = config.get('SQL', 'Passwort')
 		self.database = config.get('SQL', 'DatenbankName')
-		self.SetIP()
 
 	# Zungangsberechtigung kontrollieren
 	def CheckPermission(self, key, roomNumber):
