@@ -254,10 +254,12 @@ class SQL:
 			IP = '127.0.0.1'
 		finally:
 			s.close()
+		print(IP)
 		return IP
 
 	# Schreibt eigene IP in die Datenbank
 	def SetIP(self, number):
+		print('setIP')
 		IP = get_ip()
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
