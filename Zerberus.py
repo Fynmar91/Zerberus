@@ -14,6 +14,8 @@ import subprocess
 import smtplib
 import ssl
 import socket
+import fcntl
+import struct
 import RPi.GPIO as GPIO
 import MySQLdb
 import SimpleMFRC522
@@ -246,17 +248,8 @@ class SQL:
 
 	# Eigene IP finden
 	def get_ip(self):
-#		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		try:
-			IP = socket.gethostbyname(socket.gethostname())
-#			s.connect(('10.255.255.255', 1))
-#			IP = s.getsockname()[0]
-		except:
-			IP = '127.0.0.1'
-#		finally:
-#			s.close()
-		print(IP)
-		return IP
+		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		return socket.inet_ntoa(fcntl.ioctl(s.fileno(),	0x8915, struct.pack('256s', eth0[:15]))[20:24])
 
 	# Schreibt eigene IP in die Datenbank
 	def SetIP(self, roomNr):
