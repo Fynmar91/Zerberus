@@ -3,9 +3,9 @@
 import socket
 
 TCP_IP = '10.1.1.41'
-TCP_PORT = 5005
+TCP_PORT = 8080
 BUFFER_SIZE = 1024
-MESSAGE = "Hello, World!"
+MESSAGE = "Hello, World!".encode()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((TCP_IP, TCP_PORT))

@@ -27,36 +27,16 @@ import ConfigParser
 # Objekte werden erstellt; Endlosschleife 
 # ================================================================================
 def main():
-	i = 0
-	door = DoorControl()
-	reader = SimpleMFRC522.SimpleMFRC522()
+	door1 = DoorControl()
+	reader1 = SimpleMFRC522.SimpleMFRC522()
 
-	if(door.manual == 0):
-		while True:
+	while True:
 			key = False
 			# Status LED Gruen
 			GPIO.output(22,GPIO.HIGH)
 			# RFID-Karte einlesen
-			key = reader.read_id_Cont()
-			door.Open(key)
-		
-	else:
-		while True:
-			key = False
-			# Status LED Gruen
-			GPIO.output(22,GPIO.HIGH)
-			# RFID-Karte einlesen
-			key = reader.read_id()
-			if(key):
-				# Versuche Tuer zu oeffnen
-				door.Open(key)
-			elif(i < 5):
-				# 5 mal hochzaehlen
-				i = i + 1
-			else:
-				# Pruefe ob ueber Web-Interface geoeffnet wurde
-				door.ManualOpen()
-				i = 0
+			key = reader1.read_id_Cont()
+			door1.Open(key)
 
 # ================================================================================
 #				Klasse: DoorControl
@@ -210,23 +190,6 @@ class SQL:
 		db.close()
 		return result
 
-	# Prueft ob openFlag gesetzt wurde
-	def CheckManualAccess(self, roomNumber):
-		Room = self.Query('SELECT * FROM Rooms WHERE roomNr = %s', roomNumber)
-		if(Room):
-			# Room[7] = openFlag
-			if(Room[7] == 1):
-				self.ResetOpenFlag(roomNumber)
-				return True
-
-	# Setzt openFlag des Raums auf 0
-	def ResetOpenFlag(self, roomNr):
-		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
-		curser = db.cursor()
-		curser.execute('UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s', (roomNr,))
-		db.commit()
-		db.close()
-
 	# Log abfragen
 	def GetLogs(self):
 		result = False
@@ -262,6 +225,23 @@ class SQL:
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
 		curser.execute('UPDATE Rooms SET IP = %s WHERE RoomNr = %s', (IP ,roomNr))
+		db.commit()
+		db.close()
+
+	# Prueft ob openFlag gesetzt wurde
+	def CheckManualAccess(self, roomNumber):
+		Room = self.Query('SELECT * FROM Rooms WHERE roomNr = %s', roomNumber)
+		if(Room):
+			# Room[7] = openFlag
+			if(Room[7] == 1):
+				self.ResetOpenFlag(roomNumber)
+				return True
+
+	# Setzt openFlag des Raums auf 0
+	def ResetOpenFlag(self, roomNr):
+		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
+		curser = db.cursor()
+		curser.execute('UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s', (roomNr,))
 		db.commit()
 		db.close()
 
@@ -332,3 +312,6 @@ def Archive():
 		mail = Mail()
 		mail.SendError(error, 'ARCHIVE ERROR:')
 
+def Manual():
+	door1 = DoorControl()
+	door1.ManualOpen()

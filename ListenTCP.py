@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import socket
-#import Zerberus
+import Zerberus
 
 TCP_IP = '10.1.1.41'
 TCP_PORT = 8080
@@ -16,6 +16,7 @@ print ('Connection address:', addr)
 while 1:
 	data = conn.recv(BUFFER_SIZE)
 	if not data: break
+	Zerberus.Manual()
 	print ("received data:", data)
 	conn.send(data)  # echo
 conn.close()
