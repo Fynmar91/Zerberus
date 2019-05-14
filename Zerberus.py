@@ -245,7 +245,7 @@ class SQL:
 		db.close()
 
 	# Eigene IP finden
-	def get_ip():
+	def get_ip(self):
 		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		try:
 			s.connect(('10.255.255.255', 1))
@@ -258,7 +258,7 @@ class SQL:
 		return IP
 
 	# Schreibt eigene IP in die Datenbank
-	def SetIP(self, number):
+	def SetIP(self):
 		print('setIP')
 		IP = get_ip()
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
