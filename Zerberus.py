@@ -80,9 +80,10 @@ class DoorControl:
 	def __init__(self):
 		config = ConfigParser.RawConfigParser()
 		config.read('/home/pi/Zerberus/config.ini')
-		self.number = config.get('ROOM', 'Raumnummer')
+		self.roomNumber = config.get('ROOM', 'Raumnummer')
 		self.manual = config.get('ROOM', 'WebOeffner')
 		self.sql = SQL()
+		self.sql.SetIP(roomNumber)
 
 		# GPIO in BCM mode
 		GPIO.setwarnings(False)
@@ -98,7 +99,7 @@ class DoorControl:
 
 	def Open(self, key):
 		# Zungangsberechtigung kontrollieren
-		event = self.sql.CheckPermission(key, self.number) 
+		event = self.sql.CheckPermission(key, self.roomNumber) 
 		if(event == 1):
 			# Event 1 = Zugang erlaubt; Tuer oeffnen
 			self.Granted() 
@@ -111,7 +112,7 @@ class DoorControl:
 
 	# Prueft ob openFlag gesetzt wurde
 	def ManualOpen(self):
-		if(self.sql.CheckManualAccess(self.number)):
+		if(self.sql.CheckManualAccess(self.roomNumber)):
 			# Tuer oeffnen
 			self.Granted()
 
@@ -170,9 +171,9 @@ class SQL:
 		self.SetIP()
 
 	# Zungangsberechtigung kontrollieren
-	def CheckPermission(self, key, number):
+	def CheckPermission(self, key, roomNumber):
 		User = self.Query("SELECT * FROM Users WHERE tagID = %s", key)
-		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", number)
+		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", roomNumber)
 		event = 2
 		if(User and Room):
 			# User[6] = Prio; Room[6] = Prio
@@ -186,14 +187,14 @@ class SQL:
 			# Event 2 = Unbekannt
 			event = 2
 		# Event protokollieren
-		self.Log(event, key, number, User[1]) 
+		self.Log(event, key, roomNumber, User[1]) 
 		return event
 
 	# Event protokollieren
-	def Log(self, event, key, number, name):
+	def Log(self, event, key, roomNumber, name):
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
-		curser.execute("INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())", (event, key, number, name))
+		curser.execute("INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())", (event, key, roomNumber, name))
 		db.commit()
 		db.close()
 
@@ -209,19 +210,19 @@ class SQL:
 		return result
 
 	# Prueft ob openFlag gesetzt wurde
-	def CheckManualAccess(self, number):
-		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", number)
+	def CheckManualAccess(self, roomNumber):
+		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", roomNumber)
 		if(Room):
 			# Room[7] = openFlag
 			if(Room[7] == 1):
-				self.ResetOpenFlag(number)
+				self.ResetOpenFlag(roomNumber)
 				return True
 
 	# Setzt openFlag des Raums auf 0
-	def ResetOpenFlag(self, number):
+	def ResetOpenFlag(self, roomNr):
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
-		curser.execute("UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s", (number,))
+		curser.execute("UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s", (roomNr,))
 		db.commit()
 		db.close()
 
@@ -258,12 +259,12 @@ class SQL:
 		return IP
 
 	# Schreibt eigene IP in die Datenbank
-	def SetIP(self):
+	def SetIP(self, roomNr):
 		print('setIP')
 		IP = self.get_ip()
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
-		curser.execute("UPDATE Rooms SET openFlag = 0 WHERE IP = %s", (IP,))
+		curser.execute("UPDATE Rooms SET IP = %s WHERE RoomNr = %s", (IP ,roomNr))
 		db.commit()
 		db.close()
 
