@@ -13,6 +13,7 @@ import time
 import subprocess
 import smtplib
 import ssl
+import socket
 import RPi.GPIO as GPIO
 import MySQLdb
 import SimpleMFRC522
@@ -166,6 +167,7 @@ class SQL:
 		self.user = config.get('SQL', 'Nutzer')
 		self.password = config.get('SQL', 'Passwort')
 		self.database = config.get('SQL', 'DatenbankName')
+		self.SetIP()
 
 	# Zungangsberechtigung kontrollieren
 	def CheckPermission(self, key, number):
@@ -223,7 +225,7 @@ class SQL:
 		db.commit()
 		db.close()
 
-	# SQL Anfrage
+	# Log abfragen
 	def GetLogs(self):
 		result = False
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
@@ -234,11 +236,32 @@ class SQL:
 		db.close()
 		return result
 
-	# SQL Anfrage
+	# Logs loeschen
 	def DelLogs(self):
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
 		curser.execute("DELETE FROM Logs")
+		db.commit()
+		db.close()
+
+	# Eigene IP finden
+	def get_ip():
+		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		try:
+			s.connect(('10.255.255.255', 1))
+			IP = s.getsockname()[0]
+		except:
+			IP = '127.0.0.1'
+		finally:
+			s.close()
+		return IP
+
+	# Schreibt eigene IP in die Datenbank
+	def SetIP(self, number):
+		IP = get_ip()
+		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
+		curser = db.cursor()
+		curser.execute("UPDATE Rooms SET openFlag = 0 WHERE IP = %s", (IP,))
 		db.commit()
 		db.close()
 
@@ -295,9 +318,9 @@ if __name__ == "__main__":
 		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
 
 # ================================================================================
-#				extern ausfuehren = Archive
+#				Funktionen fuer externes ausfuehren
 # ================================================================================
-elif __name__ == "Zerberus":
+def Archive():
 	try:
 		sql = SQL()
 		mail = Mail()
@@ -308,3 +331,4 @@ elif __name__ == "Zerberus":
 	except Exception as error:
 		mail = Mail()
 		mail.SendError(error, 'ARCHIVE ERROR:')
+
