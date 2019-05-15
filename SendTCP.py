@@ -4,10 +4,8 @@ import socket
 
 def main():
 	s1 = Socket()	
-	while True:
-		s1.Receive()
+	s1.Send()
 
-	conn.close()
 
 class Socket:
 	def __init__(self):
@@ -23,6 +21,7 @@ class Socket:
 		s.connect((self.TCP_IP, self.TCP_PORT))
 		s.send(self.MESSAGE)
 		data = s.recv(self.BUFFER_SIZE)
+		conn.close()
 
 
 if __name__ == '__main__':
