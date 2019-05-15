@@ -66,5 +66,5 @@ if __name__ == '__main__':
 		multiColorWipe(Color(0, 255, 0), Color(0, 255, 0))  # Blue wipe
 		multiColorWipe(Color(0, 0, 255), Color(0, 0, 255))  # Green wipe
 		multiColorWipe(Color(255, 255, 255), Color(255, 255, 255))  # Composite White wipe
-		multiColorWipe(Color(0, 0, 0, 255), Color(0, 0, 0))  # White wipe
-		multiColorWipe(Color(255, 255, 255, 255), Color(0, 0, 0)) # Composite White + White LED wipe
+		multiColorWipe(Color(0, 0, 0), Color(0, 0, 0))  # White wipe
+		multiColorWipe(Color(255, 255, 255), Color(0, 0, 0)) # Composite White + White LED wipe
