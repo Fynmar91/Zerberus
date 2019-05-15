@@ -16,11 +16,15 @@ class Socket:
 	def Send(self):
 		self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.MESSAGE = "Hello, World!".encode()
+		print('1')
 		self.s.connect((self.TCP_IP, self.TCP_PORT))
+		print('2')
 		self.s.send(self.MESSAGE)
-		data = self.s.recv(self.BUFFER_SIZE)
+		print('3')
+		data = self.s.recv(self.BUFFER_SIZE)		
+		print('4')
 		conn.close()
 
 
 if __name__ == '__main__':
-		main()
+	main()
