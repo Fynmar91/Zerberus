@@ -213,7 +213,8 @@ class SQL:
 	def get_ip(self):
 		try:
 			s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-			IP = socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', 'eth0'[:15]))[20:24])
+			#IP = socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', 'eth0'[:15]))[20:24])
+			IP = socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', 'wlan0'[:15]))[20:24])
 		except:
 			IP = 'NULL'
 		finally:
