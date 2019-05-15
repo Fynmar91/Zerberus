@@ -1,14 +1,30 @@
 #!/usr/bin/env python
 
+#	Projekt: Zerberus FS2V Zugangskontrolle
+#	TCP Senden v1.1
+#	Yannik Seitz 15.05.19
+
 import socket
 
-TCP_IP = '10.1.1.41'
-TCP_PORT = 8080
-BUFFER_SIZE = 1024
-MESSAGE = "Hello, World!".encode()
+def main():
+	s1 = Socket()	
+	s1.Send()
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((TCP_IP, TCP_PORT))
-s.send(MESSAGE)
-data = s.recv(BUFFER_SIZE)
-s.close()
+
+class Socket:
+	def __init__(self):
+		self.TCP_IP = '192.168.137.67'
+		self.TCP_PORT = 8080
+		self.BUFFER_SIZE = 1024
+
+	def Send(self):
+		self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.MESSAGE = "Hello, World!".encode()
+		self.s.connect((self.TCP_IP, self.TCP_PORT))
+		self.s.send(self.MESSAGE)
+		data = self.s.recv(self.BUFFER_SIZE)
+		print('send')
+
+
+if __name__ == '__main__':
+	main()
