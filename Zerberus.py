@@ -3,9 +3,10 @@
 #	Projekt: Zerberus FS2V Zugangskontrolle
 #	Zerberus v1.6
 #	Yannik Seitz 15.05.19
-#	Wird dieses Programm direkt ausgefuehrt erstellt es ein Objekt fuer einen RFID-Reader und eine Tuer-Kontrolle. Danach wird eine Endlosschleife gestartet.
-#	In der Schleife wird abwechselnd versucht ein RFID-Schluessel zu finden oder kontrolliert ob die Tuer uber das Web-Interface geoeffnet werden soll.
-#	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt
+#	Wird dieses Programm direkt ausgefuehrt erstellt es ein Objekt einer Tuer aus den Vorgaben der config.ini. 
+#	In einer Schleife wird versucht ein RFID-Schluessel zu finden. 
+#	Wird einer gefunden, stellt das System eine Anfrage an den SQL-Server um festzustellen ob der Zungang erlaubt ist.
+#	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt.
 
 #	Die Funktionen Archive und Manual sind fuer externe Anwendungen
 
