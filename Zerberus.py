@@ -13,6 +13,9 @@ import time
 import subprocess
 import smtplib
 import ssl
+import socket
+import fcntl
+import struct
 import RPi.GPIO as GPIO
 import MySQLdb
 import SimpleMFRC522
@@ -24,36 +27,16 @@ import ConfigParser
 # Objekte werden erstellt; Endlosschleife 
 # ================================================================================
 def main():
-	i = 0
-	door = DoorControl()
-	reader = SimpleMFRC522.SimpleMFRC522()
+	door1 = DoorControl()
+	reader1 = SimpleMFRC522.SimpleMFRC522()
 
-	if(door.manual == 0):
-		while True:
+	while True:
 			key = False
 			# Status LED Gruen
 			GPIO.output(22,GPIO.HIGH)
 			# RFID-Karte einlesen
-			key = reader.read_id_Cont()
-			door.Open(key)
-		
-	else:
-		while True:
-			key = False
-			# Status LED Gruen
-			GPIO.output(22,GPIO.HIGH)
-			# RFID-Karte einlesen
-			key = reader.read_id()
-			if(key):
-				# Versuche Tuer zu oeffnen
-				door.Open(key)
-			elif(i < 5):
-				# 5 mal hochzaehlen
-				i = i + 1
-			else:
-				# Pruefe ob ueber Web-Interface geoeffnet wurde
-				door.ManualOpen()
-				i = 0
+			key = reader1.read_id_Cont()
+			door1.Open(key)
 
 # ================================================================================
 #				Klasse: DoorControl
@@ -79,9 +62,10 @@ class DoorControl:
 	def __init__(self):
 		config = ConfigParser.RawConfigParser()
 		config.read('/home/pi/Zerberus/config.ini')
-		self.number = config.get('ROOM', 'Raumnummer')
+		self.roomNumber = config.get('ROOM', 'Raumnummer')
 		self.manual = config.get('ROOM', 'WebOeffner')
 		self.sql = SQL()
+		self.sql.SetIP(self.roomNumber)
 
 		# GPIO in BCM mode
 		GPIO.setwarnings(False)
@@ -97,7 +81,7 @@ class DoorControl:
 
 	def Open(self, key):
 		# Zungangsberechtigung kontrollieren
-		event = self.sql.CheckPermission(key, self.number) 
+		event = self.sql.CheckPermission(key, self.roomNumber) 
 		if(event == 1):
 			# Event 1 = Zugang erlaubt; Tuer oeffnen
 			self.Granted() 
@@ -110,7 +94,7 @@ class DoorControl:
 
 	# Prueft ob openFlag gesetzt wurde
 	def ManualOpen(self):
-		if(self.sql.CheckManualAccess(self.number)):
+		if(self.sql.CheckManualAccess(self.roomNumber)):
 			# Tuer oeffnen
 			self.Granted()
 
@@ -168,9 +152,9 @@ class SQL:
 		self.database = config.get('SQL', 'DatenbankName')
 
 	# Zungangsberechtigung kontrollieren
-	def CheckPermission(self, key, number):
-		User = self.Query("SELECT * FROM Users WHERE tagID = %s", key)
-		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", number)
+	def CheckPermission(self, key, roomNumber):
+		User = self.Query('SELECT * FROM Users WHERE tagID = %s', key)
+		Room = self.Query('SELECT * FROM Rooms WHERE roomNr = %s', roomNumber)
 		event = 2
 		if(User and Room):
 			# User[6] = Prio; Room[6] = Prio
@@ -184,14 +168,14 @@ class SQL:
 			# Event 2 = Unbekannt
 			event = 2
 		# Event protokollieren
-		self.Log(event, key, number, User[1]) 
+		self.Log(event, key, roomNumber, User[1]) 
 		return event
 
 	# Event protokollieren
-	def Log(self, event, key, number, name):
+	def Log(self, event, key, roomNumber, name):
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
-		curser.execute("INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())", (event, key, number, name))
+		curser.execute('INSERT INTO Logs (event, tagID, roomNr, userName, date, time) VALUES (%s, %s, %s, %s, CURDATE(), CURRENT_TIME())', (event, key, roomNumber, name))
 		db.commit()
 		db.close()
 
@@ -206,39 +190,58 @@ class SQL:
 		db.close()
 		return result
 
-	# Prueft ob openFlag gesetzt wurde
-	def CheckManualAccess(self, number):
-		Room = self.Query("SELECT * FROM Rooms WHERE roomNr = %s", number)
-		if(Room):
-			# Room[7] = openFlag
-			if(Room[7] == 1):
-				self.ResetOpenFlag(number)
-				return True
-
-	# Setzt openFlag des Raums auf 0
-	def ResetOpenFlag(self, number):
-		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
-		curser = db.cursor()
-		curser.execute("UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s", (number,))
-		db.commit()
-		db.close()
-
-	# SQL Anfrage
+	# Log abfragen
 	def GetLogs(self):
 		result = False
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
-		curser.execute("SELECT * FROM Logs")
+		curser.execute('SELECT * FROM Logs')
 		result = curser.fetchall()
 		db.commit()
 		db.close()
 		return result
 
-	# SQL Anfrage
+	# Logs loeschen
 	def DelLogs(self):
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
-		curser.execute("DELETE FROM Logs")
+		curser.execute('DELETE FROM Logs')
+		db.commit()
+		db.close()
+
+	# Eigene IP finden
+	def get_ip(self):
+		try:
+			s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+			IP = socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', 'eth0'[:15]))[20:24])
+		except:
+			IP = 'NULL'
+		finally:
+			return IP
+
+	# Schreibt eigene IP in die Datenbank
+	def SetIP(self, roomNr):
+		IP = self.get_ip()
+		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
+		curser = db.cursor()
+		curser.execute('UPDATE Rooms SET IP = %s WHERE RoomNr = %s', (IP ,roomNr))
+		db.commit()
+		db.close()
+
+	# Prueft ob openFlag gesetzt wurde
+	def CheckManualAccess(self, roomNumber):
+		Room = self.Query('SELECT * FROM Rooms WHERE roomNr = %s', roomNumber)
+		if(Room):
+			# Room[7] = openFlag
+			if(Room[7] == 1):
+				self.ResetOpenFlag(roomNumber)
+				return True
+
+	# Setzt openFlag des Raums auf 0
+	def ResetOpenFlag(self, roomNr):
+		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
+		curser = db.cursor()
+		curser.execute('UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s', (roomNr,))
 		db.commit()
 		db.close()
 
@@ -284,7 +287,7 @@ class Mail:
 # ================================================================================
 #				ausfuehren als __main__
 # ================================================================================
-if __name__ == "__main__":
+if __name__ == '__main__':
 	try:
 		main()
 
@@ -295,9 +298,9 @@ if __name__ == "__main__":
 		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
 
 # ================================================================================
-#				extern ausfuehren = Archive
+#				Funktionen fuer externes ausfuehren
 # ================================================================================
-elif __name__ == "Zerberus":
+def Archive():
 	try:
 		sql = SQL()
 		mail = Mail()
@@ -308,3 +311,9 @@ elif __name__ == "Zerberus":
 	except Exception as error:
 		mail = Mail()
 		mail.SendError(error, 'ARCHIVE ERROR:')
+
+def Manual():
+	door1 = DoorControl()
+	door1.ManualOpen()
+	# Status LED Gruen
+	GPIO.output(22,GPIO.HIGH)
