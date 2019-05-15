@@ -9,7 +9,7 @@ def main():
 
 class Socket:
 	def __init__(self):
-		self.TCP_IP = '192.168.137.1'
+		self.TCP_IP = '192.168.137.67'
 		self.TCP_PORT = 8080
 		self.BUFFER_SIZE = 1024
 
