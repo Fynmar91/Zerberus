@@ -30,8 +30,8 @@ class Socket:
 	def Receive(self):
 		data = self.conn.recv(self.BUFFER_SIZE)
 		if data: 
+			print(data)
 			Zerberus.Manual()
-			# echo
 			self.conn.send(data)
 
 
