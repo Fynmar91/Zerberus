@@ -23,7 +23,6 @@ class Socket:
 		print('3')
 		data = self.s.recv(self.BUFFER_SIZE)		
 		print('4')
-		conn.close()
 
 
 if __name__ == '__main__':
