@@ -18,9 +18,9 @@ class Socket:
 
 
 	def Send(self):
-		s.connect((self.TCP_IP, self.TCP_PORT))
-		s.send(self.MESSAGE)
-		data = s.recv(self.BUFFER_SIZE)
+		self.s.connect((self.TCP_IP, self.TCP_PORT))
+		self.s.send(self.MESSAGE)
+		data = self.s.recv(self.BUFFER_SIZE)
 		conn.close()
 
 
