@@ -22,12 +22,12 @@ class Socket:
 		self.TCP_PORT = 8080
 		self.BUFFER_SIZE = 20
 		print(self.TCP_IP)
-
-	def Receive(self):
 		self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.s.bind((self.TCP_IP, self.TCP_PORT))
 		self.s.listen(1)
 		self.conn, self.addr = self.s.accept()
+
+	def Receive(self):
 		data = self.conn.recv(self.BUFFER_SIZE)
 		if data: 
 			Zerberus.Manual()
