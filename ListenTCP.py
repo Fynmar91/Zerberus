@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+#	Projekt: Zerberus FS2V Zugangskontrolle
+#	TCP Empfangen v1.1
+#	Yannik Seitz 15.05.19
+
 import socket
 import fcntl
 import struct

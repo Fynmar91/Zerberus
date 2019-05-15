@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+#	Projekt: Zerberus FS2V Zugangskontrolle
+#	TCP Senden v1.1
+#	Yannik Seitz 15.05.19
+
 import socket
 
 def main():
@@ -18,7 +22,7 @@ class Socket:
 		self.MESSAGE = "Hello, World!".encode()
 		self.s.connect((self.TCP_IP, self.TCP_PORT))
 		self.s.send(self.MESSAGE)
-		data = self.s.recv(self.BUFFER_SIZE)		
+		data = self.s.recv(self.BUFFER_SIZE)
 		print('send')
 
 

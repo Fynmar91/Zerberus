@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	Zerberus v1.5
-#	Yannik Seitz 02.05.19
+#	Zerberus v1.6
+#	Yannik Seitz 15.05.19
 #	Wird dieses Programm direkt ausgefuehrt erstellt es ein Objekt fuer einen RFID-Reader und eine Tuer-Kontrolle. Danach wird eine Endlosschleife gestartet.
 #	In der Schleife wird abwechselnd versucht ein RFID-Schluessel zu finden oder kontrolliert ob die Tuer uber das Web-Interface geoeffnet werden soll.
 #	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt
 
-#	Wird das Programm extern importiert holt es sich alle Logs aus der SQL-Datenbank und verschickt sie per eMail. Die Logs werden danach geloescht.
+#	Die Funktionen Archive und Manual sind fuer externe Anwendungen
 
 import time
 import subprocess
@@ -139,8 +139,18 @@ class DoorControl:
 # DelLogs() loescht alle Logs
 # Input:  | Output:
 
+# GetIP() Findet die IP-Adresse des Netzwerkadapters
+# Input:  | Output:
+
+# SetIP() Schreibt die IP-Addresse in die SQL-Datenbank
+# Input:  | Output:
+
 # CheckManualAccess() prueft ob ein Raum durch das Interface geoeffnet werden soll
 # Input:  | Output: True/False
+
+# ResetOpenFlag() Setz die openFlag auf 0
+# Input:  | Output:
+
 # ================================================================================
 class SQL:
 	def __init__(self):
@@ -210,7 +220,7 @@ class SQL:
 		db.close()
 
 	# Eigene IP finden
-	def get_ip(self):
+	def GetIP(self):
 		try:
 			s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 			#IP = socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', 'eth0'[:15]))[20:24])
@@ -222,7 +232,7 @@ class SQL:
 
 	# Schreibt eigene IP in die Datenbank
 	def SetIP(self, roomNr):
-		IP = self.get_ip()
+		IP = self.GetIP()
 		db = MySQLdb.connect(self.ip, self.user, self.password, self.database)
 		curser = db.cursor()
 		curser.execute('UPDATE Rooms SET IP = %s WHERE RoomNr = %s', (IP ,roomNr))
@@ -249,6 +259,9 @@ class SQL:
 # ================================================================================
 #				Klasse: Mail
 # Verschickt Fehlermeldungen und Protokolle
+
+# SendArchive
+# Input: Logs ;  Betreff | Output:
 
 # SendError() protokolliert ein Ereignis
 # Input: Error ;  Betreff | Output:
@@ -299,7 +312,7 @@ if __name__ == '__main__':
 		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
 
 # ================================================================================
-#				Funktionen fuer externes ausfuehren
+#				Funktionen fuer externe Anwendungen
 # ================================================================================
 def Archive():
 	try:
