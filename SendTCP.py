@@ -2,8 +2,6 @@
 
 import socket
 
-s.close()
-
 def main():
 	s1 = Socket()	
 	while True:
