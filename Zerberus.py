@@ -373,7 +373,6 @@ def Archive():
 		mail.SendError(error, 'ARCHIVE ERROR:')
 
 def Manual():
-	door1 = DoorControl()
-	door1.ManualOpen()
-	# Status LED Gruen
-	GPIO.output(22,GPIO.HIGH)
+	led1 = LED()
+	door1 = DoorControl(led1)
+	led1.Blau() 
