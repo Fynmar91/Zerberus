@@ -81,7 +81,6 @@ class DoorControl:
 	def Open(self, key):
 		# Zungangsberechtigung kontrollieren
 		event = self.sql.CheckPermission(key, self.roomNumber) 
-		print('1')
 		if(event == 1):
 			# Event 1 = Zugang erlaubt; Tuer oeffnen
 			self.Granted() 
@@ -160,7 +159,9 @@ class SQL:
 		User = self.Query('SELECT * FROM Users WHERE tagID = %s', key)
 		Room = self.Query('SELECT * FROM Rooms WHERE roomNr = %s', roomNumber)
 		event = 2
+		print('1')
 		if(User and Room):
+			print('2')
 			# User[6] = Prio; Room[6] = Prio
 			if(User[6] >= Room[6]):
 				# Event 1 = Zugang erlaubt
@@ -169,11 +170,11 @@ class SQL:
 				# Event 0 = Zugang verweigert
 				event = 0
 		elif(User == False and Room):
+			print('3')
 			# Event 2 = Unbekannt
 			event = 2
 		# Event protokollieren
-		self.Log(event, key, roomNumber, User[1]) 
-		print('1')
+		self.Log(event, key, roomNumber, User[1])
 		return event
 
 	# Event protokollieren
