@@ -90,6 +90,7 @@ class DoorControl:
 		elif(event == 2):
 			# Event 2 = Unbekannt; rote LED
 			self.Unknown() 
+			print('1')
 
 	# Prueft ob openFlag gesetzt wurde
 	def ManualOpen(self):
@@ -106,6 +107,7 @@ class DoorControl:
 
 	# Unbekannt; rote LED
 	def Unknown(self):
+		print('2')
 		self.LED.Rot()
 		GPIO.output(17,GPIO.HIGH)
 		time.sleep(1)
@@ -114,7 +116,6 @@ class DoorControl:
 	# Kein Zugang; rote LED blinkt
 	def Denied(self):
 		self.LED.RotBlink()
-		print('1')
 
 # ================================================================================
 #				Klasse: SQL
@@ -292,14 +293,13 @@ class LED:
 		self.led1.show()
 
 	def RotBlink(self):
-		for i in range(10):
-			print('test')
+		for i in range(8):
 			self.led1.setPixelColor(0, Color(128, 0, 0))
 			self.led1.show()
-			time.sleep(.2)
+			time.sleep(.1)
 			self.led1.setPixelColor(0, Color(16, 0, 0))
 			self.led1.show()
-			time.sleep(.2)
+			time.sleep(.1)
 
 # ================================================================================
 #				Klasse: Mail
