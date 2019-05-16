@@ -169,7 +169,7 @@ class SQL:
 			else:
 				# Event 0 = Zugang verweigert
 				event = 0
-		elif(User == False and Room):
+		elif((User == False) and Room):
 			print('3')
 			# Event 2 = Unbekannt
 			event = 2
