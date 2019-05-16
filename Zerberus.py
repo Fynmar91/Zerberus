@@ -65,7 +65,6 @@ class DoorControl:
 		config = ConfigParser.RawConfigParser()
 		config.read('/home/pi/Zerberus/config.ini')
 		self.roomNumber = config.get('ROOM', 'Raumnummer')
-		self.manual = config.get('ROOM', 'WebOeffner')
 		self.sql = SQL()
 		self.sql.SetIP(self.roomNumber)
 		self.LED = led1
