@@ -292,8 +292,11 @@ class LED:
 		self.led1.show()
 
 	def RotBlink(self):
-		self.led1.setPixelColor(0, Color(128, 0, 0))
-		self.led1.show()
+		for i in range(10):
+			self.led1.setPixelColor(0, Color(128, 0, 0))
+			self.led1.show()
+			self.led1.setPixelColor(0, Color(16, 0, 0))
+			self.led1.show()
 
 # ================================================================================
 #				Klasse: Mail
