@@ -295,8 +295,10 @@ class LED:
 		for i in range(10):
 			self.led1.setPixelColor(0, Color(128, 0, 0))
 			self.led1.show()
+			time.sleep(.2)
 			self.led1.setPixelColor(0, Color(16, 0, 0))
 			self.led1.show()
+			time.sleep(.2)
 
 # ================================================================================
 #				Klasse: Mail
