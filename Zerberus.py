@@ -21,6 +21,7 @@ import RPi.GPIO as GPIO
 import MySQLdb
 import SimpleMFRC522
 import ConfigParser
+from rpi_ws281x import *
 
 
 # ================================================================================
@@ -256,6 +257,37 @@ class SQL:
 		curser.execute('UPDATE Rooms SET openFlag = 0 WHERE roomNr = %s', (roomNr,))
 		db.commit()
 		db.close()
+
+
+# ================================================================================
+#				Klasse: LED
+# Verschickt Fehlermeldungen und Protokolle
+
+# SendArchive
+# Input: Logs ;  Betreff | Output:
+
+# SendError() protokolliert ein Ereignis
+# Input: Error ;  Betreff | Output:
+# ================================================================================
+
+class LED:
+	def __init__(self):
+		LED_1_COUNT      = 1      # Number of LED pixels.
+		LED_1_PIN        = 12      # GPIO pin connected to the pixels (must support PWM! GPIO 13 and 18 on RPi 3).
+		LED_1_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
+		LED_1_DMA        = 10      # DMA channel to use for generating signal (Between 1 and 14)
+		LED_1_BRIGHTNESS = 128     # Set to 0 for darkest and 255 for brightest
+		LED_1_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
+		LED_1_CHANNEL    = 0       # 0 or 1
+		LED_1_STRIP      = ws.SK6812_STRIP_GRBW
+
+	def Blau()
+
+	def Gruen()
+
+	def Rot()
+
+	def RotBlink()
 
 # ================================================================================
 #				Klasse: Mail
