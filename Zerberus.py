@@ -114,7 +114,7 @@ class DoorControl:
 	# Kein Zugang; rote LED blinkt
 	def Denied(self):
 		self.LED.RotBlink()
-		time.sleep(1)
+		print('1')
 
 # ================================================================================
 #				Klasse: SQL
@@ -293,6 +293,7 @@ class LED:
 
 	def RotBlink(self):
 		for i in range(10):
+			print('test')
 			self.led1.setPixelColor(0, Color(128, 0, 0))
 			self.led1.show()
 			time.sleep(.2)
