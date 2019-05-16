@@ -166,15 +166,19 @@ class SQL:
 			if(User[6] >= Room[6]):
 				# Event 1 = Zugang erlaubt
 				event = 1
+				# Event protokollieren	
+				self.Log(event, key, roomNumber, User[1])
 			else:
 				# Event 0 = Zugang verweigert
 				event = 0
-		elif((User == False) and Room):
+				# Event protokollieren	
+				self.Log(event, key, roomNumber, User[1])
+		else:
 			print('3')
 			# Event 2 = Unbekannt
 			event = 2
-		# Event protokollieren
-		self.Log(event, key, roomNumber, User[1])
+			self.Log(event, key, roomNumber, 'UNBEKANNT')
+	
 		return event
 
 	# Event protokollieren
