@@ -37,7 +37,9 @@ def main():
 			key = False
 			led1.Blau() 
 			# RFID-Karte einlesen
+			print('1')
 			key = reader1.read_id_Cont()
+			print('2')
 			door1.Open(key)
 
 # ================================================================================
@@ -90,7 +92,6 @@ class DoorControl:
 		elif(event == 2):
 			# Event 2 = Unbekannt; rote LED
 			self.Unknown() 
-			print('1')
 
 	# Prueft ob openFlag gesetzt wurde
 	def ManualOpen(self):
@@ -107,7 +108,6 @@ class DoorControl:
 
 	# Unbekannt; rote LED
 	def Unknown(self):
-		print('2')
 		self.LED.Rot()
 		GPIO.output(17,GPIO.HIGH)
 		time.sleep(1)
