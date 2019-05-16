@@ -29,14 +29,13 @@ from rpi_ws281x import *
 # Objekte werden erstellt; Endlosschleife 
 # ================================================================================
 def main():
-	door1 = DoorControl()
 	led1 = LED()
+	door1 = DoorControl(led1)
 	reader1 = SimpleMFRC522.SimpleMFRC522()
-	led1.Blau() 
+
 	while True:
 			key = False
-			# Status LED Gruen
-			GPIO.output(22,GPIO.HIGH)
+			led1.Blau() 
 			# RFID-Karte einlesen
 			key = reader1.read_id_Cont()
 			door1.Open(key)
@@ -62,23 +61,20 @@ def main():
 # Input:  | Output:
 # ================================================================================
 class DoorControl:
-	def __init__(self):
+	def __init__(self, led1):
 		config = ConfigParser.RawConfigParser()
 		config.read('/home/pi/Zerberus/config.ini')
 		self.roomNumber = config.get('ROOM', 'Raumnummer')
 		self.manual = config.get('ROOM', 'WebOeffner')
 		self.sql = SQL()
 		self.sql.SetIP(self.roomNumber)
+		self.LED = led1
 
 		# GPIO in BCM mode
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM) 
-		# Rot
-		GPIO.setup(17,GPIO.OUT) 
 		# Tueroeffner
 		GPIO.setup(18,GPIO.OUT) 
-		# Gruen
-		GPIO.setup(22,GPIO.OUT) 
 		# Relais schliesst bei low
 		GPIO.output(18,GPIO.HIGH) 
 
@@ -101,29 +97,23 @@ class DoorControl:
 			# Tuer oeffnen
 			self.Granted()
 
-	# Tuer oeffnen
+	# Tuer oeffnen; gruene LED
 	def Granted(self):
+		self.LED.Gruen()
 		GPIO.output(18,GPIO.LOW)
-		for i in range(10):
-			GPIO.output(22,GPIO.HIGH)
-			time.sleep(0.2)
-			GPIO.output(22,GPIO.LOW)
-			time.sleep(0.1)
+		time.sleep(4)
 		GPIO.output(18,GPIO.HIGH)
 
 	# Unbekannt; rote LED
 	def Unknown(self):
+		self.LED.Rot()
 		GPIO.output(17,GPIO.HIGH)
 		time.sleep(1)
 		GPIO.output(17,GPIO.LOW)
 
 	# Kein Zugang; rote LED blinkt
 	def Denied(self):
-		for i in range(10):
-			GPIO.output(17,GPIO.HIGH)
-			time.sleep(0.05)
-			GPIO.output(17,GPIO.LOW)
-			time.sleep(0.05)
+		self.LED.RotBlink()
 
 
 # ================================================================================
@@ -155,6 +145,7 @@ class DoorControl:
 # Input:  | Output:
 
 # ================================================================================
+
 class SQL:
 	def __init__(self):
 		config = ConfigParser.RawConfigParser()
@@ -284,7 +275,7 @@ class LED:
 		self.led1 = Adafruit_NeoPixel(self.LED_1_COUNT, self.LED_1_PIN, self.LED_1_FREQ_HZ, self.LED_1_DMA, self.LED_1_INVERT, self.LED_1_BRIGHTNESS, self.LED_1_CHANNEL, self.LED_1_STRIP)
 		self.led1.begin()
 
-	def blackout(self):
+	def Blackout(self):
 		self.led1.setPixelColor(0, Color(0,0,0))
 		self.led1.show()
 
