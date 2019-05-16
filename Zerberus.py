@@ -30,8 +30,9 @@ from rpi_ws281x import *
 # ================================================================================
 def main():
 	door1 = DoorControl()
+	led1 = LED()
 	reader1 = SimpleMFRC522.SimpleMFRC522()
-
+	led1.Blau() 
 	while True:
 			key = False
 			# Status LED Gruen
@@ -272,22 +273,33 @@ class SQL:
 
 class LED:
 	def __init__(self):
-		LED_1_COUNT      = 1      # Number of LED pixels.
-		LED_1_PIN        = 12      # GPIO pin connected to the pixels (must support PWM! GPIO 13 and 18 on RPi 3).
-		LED_1_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
-		LED_1_DMA        = 10      # DMA channel to use for generating signal (Between 1 and 14)
-		LED_1_BRIGHTNESS = 128     # Set to 0 for darkest and 255 for brightest
-		LED_1_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
-		LED_1_CHANNEL    = 0       # 0 or 1
-		LED_1_STRIP      = ws.SK6812_STRIP_GRBW
+		self.LED_1_COUNT      = 1      # Number of LED pixels.
+		self.LED_1_PIN        = 12      # GPIO pin connected to the pixels (must support PWM! GPIO 13 and 18 on RPi 3).
+		self.LED_1_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
+		self.LED_1_DMA        = 10      # DMA channel to use for generating signal (Between 1 and 14)
+		self.LED_1_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
+		self.LED_1_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
+		self.LED_1_CHANNEL    = 0       # 0 or 1
+		self.LED_1_STRIP      = ws.SK6812_STRIP_GRBW
+		self.led1 = Adafruit_NeoPixel(self.LED_1_COUNT, self.LED_1_PIN, self.LED_1_FREQ_HZ, self.LED_1_DMA, self.LED_1_INVERT, self.LED_1_BRIGHTNESS, self.LED_1_CHANNEL, self.LED_1_STRIP)
+		self.led1.begin()
+		blackout(self.led1)
 
-	def Blau()
+	def Blau(self):
+		self.led1.setPixelColor(0, Color(0, 255, 0))
+		self.led1.show()
 
-	def Gruen()
+	def Gruen(self):
+		self.led1.setPixelColor(0, Color(0, 255, 0))
+		self.led1.show()
 
-	def Rot()
+	def Rot(self):
+		self.led1.setPixelColor(0, Color(0, 255, 0))
+		self.led1.show()
 
-	def RotBlink()
+	def RotBlink(self):
+		self.led1.setPixelColor(0, Color(0, 255, 0))
+		self.led1.show()
 
 # ================================================================================
 #				Klasse: Mail
