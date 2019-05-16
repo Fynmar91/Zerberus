@@ -107,9 +107,8 @@ class DoorControl:
 	# Unbekannt; rote LED
 	def Unknown(self):
 		self.LED.Rot()
-		GPIO.output(17,GPIO.HIGH)
 		time.sleep(1)
-		GPIO.output(17,GPIO.LOW)
+
 
 	# Kein Zugang; rote LED blinkt
 	def Denied(self):
@@ -159,9 +158,7 @@ class SQL:
 		User = self.Query('SELECT * FROM Users WHERE tagID = %s', key)
 		Room = self.Query('SELECT * FROM Rooms WHERE roomNr = %s', roomNumber)
 		event = 2
-		print('1')
 		if(User and Room):
-			print('2')
 			# User[6] = Prio; Room[6] = Prio
 			if(User[6] >= Room[6]):
 				# Event 1 = Zugang erlaubt
@@ -174,7 +171,6 @@ class SQL:
 				# Event protokollieren	
 				self.Log(event, key, roomNumber, User[1])
 		else:
-			print('3')
 			# Event 2 = Unbekannt
 			event = 2
 			self.Log(event, key, roomNumber, 'UNBEKANNT')
