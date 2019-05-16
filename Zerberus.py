@@ -283,7 +283,10 @@ class LED:
 		self.LED_1_STRIP      = ws.SK6812_STRIP_GRBW
 		self.led1 = Adafruit_NeoPixel(self.LED_1_COUNT, self.LED_1_PIN, self.LED_1_FREQ_HZ, self.LED_1_DMA, self.LED_1_INVERT, self.LED_1_BRIGHTNESS, self.LED_1_CHANNEL, self.LED_1_STRIP)
 		self.led1.begin()
-		blackout(self.led1)
+
+	def blackout(self):
+		self.led1.setPixelColor(0, Color(0,0,0))
+		self.led1.show()
 
 	def Blau(self):
 		self.led1.setPixelColor(0, Color(0, 255, 0))
