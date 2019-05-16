@@ -375,4 +375,5 @@ def Archive():
 def Manual():
 	led1 = LED()
 	door1 = DoorControl(led1)
+	door1.ManualOpen()
 	led1.Blau() 
