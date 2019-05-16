@@ -289,7 +289,7 @@ class LED:
 		self.led1.show()
 
 	def Blau(self):
-		self.led1.setPixelColor(0, Color(0, 255, 0))
+		self.led1.setPixelColor(0, Color(80, 0, 0))
 		self.led1.show()
 
 	def Gruen(self):
