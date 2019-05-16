@@ -37,9 +37,7 @@ def main():
 			key = False
 			led1.Blau() 
 			# RFID-Karte einlesen
-			print('1')
 			key = reader1.read_id_Cont()
-			print('2')
 			door1.Open(key)
 
 # ================================================================================
@@ -83,6 +81,7 @@ class DoorControl:
 	def Open(self, key):
 		# Zungangsberechtigung kontrollieren
 		event = self.sql.CheckPermission(key, self.roomNumber) 
+		print('1')
 		if(event == 1):
 			# Event 1 = Zugang erlaubt; Tuer oeffnen
 			self.Granted() 
@@ -174,6 +173,7 @@ class SQL:
 			event = 2
 		# Event protokollieren
 		self.Log(event, key, roomNumber, User[1]) 
+		print('1')
 		return event
 
 	# Event protokollieren
