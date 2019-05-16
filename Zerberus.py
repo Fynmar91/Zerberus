@@ -316,7 +316,8 @@ class Mail:
 	def __init__(self):
 		config = ConfigParser.RawConfigParser()
 		config.read('/home/pi/Zerberus/config.ini')
-		self.address = config.get('EMAIL', 'Adresse')
+		self.targetaddress = config.get('EMAIL', 'ZielAdresse')
+		self.originAddress = config.get('EMAIL', 'QuellAdresse')
 		self.password = config.get('EMAIL', 'Passwort')
 		self.port = config.getint('EMAIL', 'Port')
 		self.smtp = config.get('EMAIL', 'smtpAdresse')
@@ -330,8 +331,8 @@ class Mail:
 
 		context = ssl.create_default_context()
 		server = smtplib.SMTP_SSL(self.smtp, self.port)
-		server.login(self.address, self.password)
-		server.sendmail(self.address, self.address, message)
+		server.login(self.originAddress, self.password)
+		server.sendmail(self.originAddress, self.targetaddress, message)
 
 	# Error per Email senden
 	def SendError(self, error, subject):
@@ -340,8 +341,8 @@ class Mail:
 
 		context = ssl.create_default_context()
 		server = smtplib.SMTP_SSL(self.smtp, self.port)
-		server.login(self.address, self.password)
-		server.sendmail(self.address, self.address, message)
+		server.login(self.originAddress, self.password)
+		server.sendmail(self.originAddress, self.targetaddress, message)
 
 
 # ================================================================================
