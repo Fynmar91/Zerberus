@@ -114,7 +114,7 @@ class DoorControl:
 	# Kein Zugang; rote LED blinkt
 	def Denied(self):
 		self.LED.RotBlink()
-
+		time.sleep(1)
 
 # ================================================================================
 #				Klasse: SQL
