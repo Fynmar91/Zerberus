@@ -1,2 +1,1 @@
-sleep 45
-sudo shutdown -r now
+sudo shutdown -r -t sec 45
