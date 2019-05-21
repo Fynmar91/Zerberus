@@ -1,1 +1,2 @@
-#sudo shutdown -r now
+sleep 45
+sudo shutdown -r now

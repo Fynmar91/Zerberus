@@ -3,10 +3,10 @@
 #	Projekt: Zerberus FS2V Zugangskontrolle
 #	Zerberus v1.7
 #	Yannik Seitz 16.05.19
-#	Wird dieses Programm direkt ausgefuehrt erstellt es ein Objekt einer Tuer aus den Vorgaben der config.ini. 
+#	Wird dieses Programm direkt ausgefuehrt erstellt es ein Tuer-, RC522-Reader- und LED-Objekt aus den Vorgaben der config.ini. 
 #	In einer Schleife wird versucht ein RFID-Schluessel zu finden. 
 #	Wird einer gefunden, stellt das System eine Anfrage an den SQL-Server um festzustellen ob der Zungang erlaubt ist.
-#	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und ein Neustart durchgefuehrt.
+#	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und nach 45 Sekunden ein Neustart durchgefuehrt.
 
 #	Die Funktionen Archive und Manual sind fuer externe Anwendungen
 
@@ -255,14 +255,24 @@ class SQL:
 
 # ================================================================================
 #				Klasse: LED
-# Verschickt Fehlermeldungen und Protokolle
+# Steuert die LED
 
-# SendArchive
-# Input: Logs ;  Betreff | Output:
+# Blackout()
+# Input:  | Output:
 
-# SendError() protokolliert ein Ereignis
-# Input: Error ;  Betreff | Output:
-# ================================================================================
+# Blau() 
+# Input: | Output:
+
+# Gruen() 
+# Input: | Output:
+
+# Rot() 
+# Input: | Output:
+
+# RotBlink() 
+# Input: | Output:
+
+#  ================================================================================
 
 class LED:
 	def __init__(self):
