@@ -6,7 +6,7 @@
 #	Wird dieses Programm direkt ausgefuehrt erstellt es ein Tuer-, RC522-Reader- und LED-Objekt aus den Vorgaben der config.ini. 
 #	In einer Schleife wird versucht ein RFID-Schluessel zu finden. 
 #	Wird einer gefunden, stellt das System eine Anfrage an den SQL-Server um festzustellen ob der Zungang erlaubt ist.
-#	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und nach 45 Sekunden ein Neustart durchgefuehrt.
+#	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und nach 60 Sekunden ein Neustart durchgefuehrt.
 
 #	Die Funktionen Archive und Manual sind fuer externe Anwendungen
 
