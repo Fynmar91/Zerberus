@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	Zerberus v1.6
-#	Yannik Seitz 15.05.19
+#	Zerberus v1.7
+#	Yannik Seitz 16.05.19
 #	Wird dieses Programm direkt ausgefuehrt erstellt es ein Objekt einer Tuer aus den Vorgaben der config.ini. 
 #	In einer Schleife wird versucht ein RFID-Schluessel zu finden. 
 #	Wird einer gefunden, stellt das System eine Anfrage an den SQL-Server um festzustellen ob der Zungang erlaubt ist.
@@ -21,6 +21,7 @@ import RPi.GPIO as GPIO
 import MySQLdb
 import SimpleMFRC522
 import ConfigParser
+from rpi_ws281x import *
 
 
 # ================================================================================
@@ -28,13 +29,13 @@ import ConfigParser
 # Objekte werden erstellt; Endlosschleife 
 # ================================================================================
 def main():
-	door1 = DoorControl()
+	led1 = LED()
+	door1 = DoorControl(led1)
 	reader1 = SimpleMFRC522.SimpleMFRC522()
 
 	while True:
 			key = False
-			# Status LED Gruen
-			GPIO.output(22,GPIO.HIGH)
+			led1.Blau() 
 			# RFID-Karte einlesen
 			key = reader1.read_id_Cont()
 			door1.Open(key)
@@ -60,23 +61,19 @@ def main():
 # Input:  | Output:
 # ================================================================================
 class DoorControl:
-	def __init__(self):
+	def __init__(self, led1):
 		config = ConfigParser.RawConfigParser()
 		config.read('/home/pi/Zerberus/config.ini')
 		self.roomNumber = config.get('ROOM', 'Raumnummer')
-		self.manual = config.get('ROOM', 'WebOeffner')
 		self.sql = SQL()
 		self.sql.SetIP(self.roomNumber)
+		self.LED = led1
 
 		# GPIO in BCM mode
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM) 
-		# Rot
-		GPIO.setup(17,GPIO.OUT) 
 		# Tueroeffner
 		GPIO.setup(18,GPIO.OUT) 
-		# Gruen
-		GPIO.setup(22,GPIO.OUT) 
 		# Relais schliesst bei low
 		GPIO.output(18,GPIO.HIGH) 
 
@@ -99,30 +96,22 @@ class DoorControl:
 			# Tuer oeffnen
 			self.Granted()
 
-	# Tuer oeffnen
+	# Tuer oeffnen; gruene LED
 	def Granted(self):
+		self.LED.Gruen()
 		GPIO.output(18,GPIO.LOW)
-		for i in range(10):
-			GPIO.output(22,GPIO.HIGH)
-			time.sleep(0.2)
-			GPIO.output(22,GPIO.LOW)
-			time.sleep(0.1)
+		time.sleep(4)
 		GPIO.output(18,GPIO.HIGH)
 
 	# Unbekannt; rote LED
 	def Unknown(self):
-		GPIO.output(17,GPIO.HIGH)
+		self.LED.Rot()
 		time.sleep(1)
-		GPIO.output(17,GPIO.LOW)
+
 
 	# Kein Zugang; rote LED blinkt
 	def Denied(self):
-		for i in range(10):
-			GPIO.output(17,GPIO.HIGH)
-			time.sleep(0.05)
-			GPIO.output(17,GPIO.LOW)
-			time.sleep(0.05)
-
+		self.LED.RotBlink()
 
 # ================================================================================
 #				Klasse: SQL
@@ -153,6 +142,7 @@ class DoorControl:
 # Input:  | Output:
 
 # ================================================================================
+
 class SQL:
 	def __init__(self):
 		config = ConfigParser.RawConfigParser()
@@ -172,14 +162,18 @@ class SQL:
 			if(User[6] >= Room[6]):
 				# Event 1 = Zugang erlaubt
 				event = 1
+				# Event protokollieren	
+				self.Log(event, key, roomNumber, User[1])
 			else:
 				# Event 0 = Zugang verweigert
 				event = 0
-		elif(User == False and Room):
+				# Event protokollieren	
+				self.Log(event, key, roomNumber, User[1])
+		else:
 			# Event 2 = Unbekannt
 			event = 2
-		# Event protokollieren
-		self.Log(event, key, roomNumber, User[1]) 
+			self.Log(event, key, roomNumber, 'UNBEKANNT')
+	
 		return event
 
 	# Event protokollieren
@@ -224,8 +218,8 @@ class SQL:
 	def GetIP(self):
 		try:
 			s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-			#IP = socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', 'eth0'[:15]))[20:24])
-			IP = socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', 'wlan0'[:15]))[20:24])
+			IP = socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', 'eth0'[:15]))[20:24])
+			#IP = socket.inet_ntoa(fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', 'wlan0'[:15]))[20:24])
 		except:
 			IP = 'NULL'
 		finally:
@@ -257,6 +251,56 @@ class SQL:
 		db.commit()
 		db.close()
 
+
+# ================================================================================
+#				Klasse: LED
+# Verschickt Fehlermeldungen und Protokolle
+
+# SendArchive
+# Input: Logs ;  Betreff | Output:
+
+# SendError() protokolliert ein Ereignis
+# Input: Error ;  Betreff | Output:
+# ================================================================================
+
+class LED:
+	def __init__(self):
+		self.LED_1_COUNT      = 1      # Number of LED pixels.
+		self.LED_1_PIN        = 12      # GPIO pin connected to the pixels (must support PWM! GPIO 13 and 18 on RPi 3).
+		self.LED_1_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
+		self.LED_1_DMA        = 10      # DMA channel to use for generating signal (Between 1 and 14)
+		self.LED_1_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
+		self.LED_1_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
+		self.LED_1_CHANNEL    = 0       # 0 or 1
+		self.LED_1_STRIP      = ws.SK6812_STRIP_GRBW
+		self.led1 = Adafruit_NeoPixel(self.LED_1_COUNT, self.LED_1_PIN, self.LED_1_FREQ_HZ, self.LED_1_DMA, self.LED_1_INVERT, self.LED_1_BRIGHTNESS, self.LED_1_CHANNEL, self.LED_1_STRIP)
+		self.led1.begin()
+
+	def Blackout(self):
+		self.led1.setPixelColor(0, Color(0,0,0))
+		self.led1.show()
+
+	def Blau(self):
+		self.led1.setPixelColor(0, Color(0, 0, 32))
+		self.led1.show()
+
+	def Gruen(self):
+		self.led1.setPixelColor(0, Color(0, 128, 0))
+		self.led1.show()
+
+	def Rot(self):
+		self.led1.setPixelColor(0, Color(128, 0, 0))
+		self.led1.show()
+
+	def RotBlink(self):
+		for i in range(8):
+			self.led1.setPixelColor(0, Color(128, 0, 0))
+			self.led1.show()
+			time.sleep(.1)
+			self.led1.setPixelColor(0, Color(16, 0, 0))
+			self.led1.show()
+			time.sleep(.1)
+
 # ================================================================================
 #				Klasse: Mail
 # Verschickt Fehlermeldungen und Protokolle
@@ -271,7 +315,8 @@ class Mail:
 	def __init__(self):
 		config = ConfigParser.RawConfigParser()
 		config.read('/home/pi/Zerberus/config.ini')
-		self.address = config.get('EMAIL', 'Adresse')
+		self.targetaddress = config.get('EMAIL', 'ZielAdresse')
+		self.originAddress = config.get('EMAIL', 'QuellAdresse')
 		self.password = config.get('EMAIL', 'Passwort')
 		self.port = config.getint('EMAIL', 'Port')
 		self.smtp = config.get('EMAIL', 'smtpAdresse')
@@ -285,8 +330,8 @@ class Mail:
 
 		context = ssl.create_default_context()
 		server = smtplib.SMTP_SSL(self.smtp, self.port)
-		server.login(self.address, self.password)
-		server.sendmail(self.address, self.address, message)
+		server.login(self.originAddress, self.password)
+		server.sendmail(self.originAddress, self.targetaddress, message)
 
 	# Error per Email senden
 	def SendError(self, error, subject):
@@ -295,8 +340,8 @@ class Mail:
 
 		context = ssl.create_default_context()
 		server = smtplib.SMTP_SSL(self.smtp, self.port)
-		server.login(self.address, self.password)
-		server.sendmail(self.address, self.address, message)
+		server.login(self.originAddress, self.password)
+		server.sendmail(self.originAddress, self.targetaddress, message)
 
 
 # ================================================================================
@@ -328,7 +373,7 @@ def Archive():
 		mail.SendError(error, 'ARCHIVE ERROR:')
 
 def Manual():
-	door1 = DoorControl()
+	led1 = LED()
+	door1 = DoorControl(led1)
 	door1.ManualOpen()
-	# Status LED Gruen
-	GPIO.output(22,GPIO.HIGH)
+	led1.Blau() 

@@ -21,8 +21,8 @@ class Socket:
 	def __init__(self):
 		self.TCP_IP = False
 		self.s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		#self.TCP_IP = socket.inet_ntoa(fcntl.ioctl(self.s.fileno(), 0x8915, struct.pack('256s', 'eth0'[:15]))[20:24])
-		self.TCP_IP = socket.inet_ntoa(fcntl.ioctl(self.s.fileno(), 0x8915, struct.pack('256s', 'wlan0'[:15]))[20:24])
+		self.TCP_IP = socket.inet_ntoa(fcntl.ioctl(self.s.fileno(), 0x8915, struct.pack('256s', 'eth0'[:15]))[20:24])
+		#self.TCP_IP = socket.inet_ntoa(fcntl.ioctl(self.s.fileno(), 0x8915, struct.pack('256s', 'wlan0'[:15]))[20:24])
 		self.TCP_PORT = 8080
 		self.BUFFER_SIZE = 20
 		print(self.TCP_IP)
