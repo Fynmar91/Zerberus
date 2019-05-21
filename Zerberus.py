@@ -241,6 +241,7 @@ class SQL:
 			# Room[7] = openFlag
 			if(Room[7] == 1):
 				self.ResetOpenFlag(roomNumber)
+				self.Log(1, 0, roomNumber, 'WEB-INTERFACE')
 				return True
 
 	# Setzt openFlag des Raums auf 0
