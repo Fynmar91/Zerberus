@@ -92,7 +92,7 @@ class DoorControl:
 			self.Unknown()
 		elif(event == 3):
 			# Event 3 = Raum Unbekannt
-			self.led1.OrangeBlink()
+			self.LED.OrangeBlink()
 
 	# Prueft ob openFlag gesetzt wurde
 	def ManualOpen(self):
