@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	Zerberus v1.7
-#	Yannik Seitz 16.05.19
+#	Zerberus v1.8
+#	Yannik Seitz 22.05.19
 #	Wird dieses Programm direkt ausgefuehrt erstellt es ein Tuer-, RC522-Reader- und LED-Objekt aus den Vorgaben der config.ini. 
 #	In einer Schleife wird versucht ein RFID-Schluessel zu finden. 
 #	Wird einer gefunden, stellt das System eine Anfrage an den SQL-Server um festzustellen ob der Zungang erlaubt ist.
