@@ -32,11 +32,11 @@ def main():
 	led1 = LED()
 	door1 = DoorControl(led1)
 	reader1 = SimpleMFRC522.SimpleMFRC522()
+	led1.Start()
 
 	while True:
 			key = False
-			led1.Start()
-			led1.Blau() 
+			led1.Blau()
 			# RFID-Karte einlesen
 			key = reader1.read_id_Cont()
 			door1.Open(key)
