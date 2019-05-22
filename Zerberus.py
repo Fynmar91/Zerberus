@@ -32,8 +32,8 @@ def main():
 	led1 = LED()
 	door1 = DoorControl(led1)
 	reader1 = SimpleMFRC522.SimpleMFRC522()
-	led1.Start()	
-	door1.Open('null')
+	led1.Start()
+	door1.Open(1337)
 
 	while True:
 			key = False
