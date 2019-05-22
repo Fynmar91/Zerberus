@@ -83,13 +83,16 @@ class DoorControl:
 		event = self.sql.CheckPermission(key, self.roomNumber) 
 		if(event == 1):
 			# Event 1 = Zugang erlaubt; Tuer oeffnen
-			self.Granted() 
+			self.Granted()
 		elif(event == 0):
 			# Event 0 = Kein Zugang; rote LED blinkt
-			self.Denied() 
+			self.Denied()
 		elif(event == 2):
 			# Event 2 = Unbekannt; rote LED
-			self.Unknown() 
+			self.Unknown()
+		elif(event == 3):
+			# Event 3 = Raum Unbekannt
+			self.led1.OrangeBlink()
 
 	# Prueft ob openFlag gesetzt wurde
 	def ManualOpen(self):
@@ -170,6 +173,9 @@ class SQL:
 				event = 0
 				# Event protokollieren	
 				self.Log(event, key, roomNumber, User[1])
+		elif(not Room):
+			# Event 3 = Raum unbekannt
+			event = 3
 		else:
 			# Event 2 = Unbekannt
 			event = 2
@@ -320,6 +326,15 @@ class LED:
 			self.led1.show()
 			time.sleep(.1)
 			self.led1.setPixelColor(0, Color(16, 0, 0))
+			self.led1.show()
+			time.sleep(.1)
+
+def OrangeBlink(self):
+		for i in range(800):
+			self.led1.setPixelColor(0, Color(128, 92, 0))
+			self.led1.show()
+			time.sleep(.1)
+			self.led1.setPixelColor(0, Color(16, 12, 0))
 			self.led1.show()
 			time.sleep(.1)
 
