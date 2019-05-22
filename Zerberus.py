@@ -35,6 +35,7 @@ def main():
 
 	while True:
 			key = False
+			led1.Start()
 			led1.Blau() 
 			# RFID-Karte einlesen
 			key = reader1.read_id_Cont()
@@ -275,6 +276,16 @@ class LED:
 		self.LED_1_STRIP      = ws.SK6812_STRIP_GRBW
 		self.led1 = Adafruit_NeoPixel(self.LED_1_COUNT, self.LED_1_PIN, self.LED_1_FREQ_HZ, self.LED_1_DMA, self.LED_1_INVERT, self.LED_1_BRIGHTNESS, self.LED_1_CHANNEL, self.LED_1_STRIP)
 		self.led1.begin()
+
+
+	def Start(self):
+		for i in range(8):
+			self.led1.setPixelColor(0, Color(0, 0, 64))
+			self.led1.show()
+			time.sleep(.1)
+			self.led1.setPixelColor(0, Color(0, 0, 16))
+			self.led1.show()
+			time.sleep(.1)
 
 	def Blackout(self):
 		self.led1.setPixelColor(0, Color(0,0,0))
