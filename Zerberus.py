@@ -33,9 +33,9 @@ def main():
 	door1 = DoorControl(led1)
 	reader1 = SimpleMFRC522.SimpleMFRC522()
 	led1.Start()	
+	door1.Open('null')
 
 	while True:
-			door1.Open('null')
 			key = False
 			led1.Blau()
 			# RFID-Karte einlesen
@@ -331,7 +331,7 @@ class LED:
 			time.sleep(.1)
 
 	def OrangeBlink(self):
-		for i in range(16):
+		for i in range(128):
 			self.led1.setPixelColor(0, Color(32, 24, 0))
 			self.led1.show()
 			time.sleep(.1)
