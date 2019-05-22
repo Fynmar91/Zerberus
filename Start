@@ -1,4 +1,4 @@
 #!/bin/sh
 sudo killall python
-python /home/pi/Zerberus/Zerberus.py &
-python /home/pi/Zerberus/ListenTCP.py &
+sudo python /home/pi/Zerberus/Zerberus.py &
+sudo python /home/pi/Zerberus/ListenTCP.py &
