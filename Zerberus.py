@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	Zerberus v1.7
-#	Yannik Seitz 16.05.19
+#	Zerberus v1.8
+#	Yannik Seitz 22.05.19
 #	Wird dieses Programm direkt ausgefuehrt erstellt es ein Tuer-, RC522-Reader- und LED-Objekt aus den Vorgaben der config.ini. 
 #	In einer Schleife wird versucht ein RFID-Schluessel zu finden. 
 #	Wird einer gefunden, stellt das System eine Anfrage an den SQL-Server um festzustellen ob der Zungang erlaubt ist.
@@ -32,10 +32,12 @@ def main():
 	led1 = LED()
 	door1 = DoorControl(led1)
 	reader1 = SimpleMFRC522.SimpleMFRC522()
+	led1.Start()
+	door1.Open(1337)
 
 	while True:
 			key = False
-			led1.Blau() 
+			led1.Blau()
 			# RFID-Karte einlesen
 			key = reader1.read_id_Cont()
 			door1.Open(key)
@@ -82,13 +84,16 @@ class DoorControl:
 		event = self.sql.CheckPermission(key, self.roomNumber) 
 		if(event == 1):
 			# Event 1 = Zugang erlaubt; Tuer oeffnen
-			self.Granted() 
+			self.Granted()
 		elif(event == 0):
 			# Event 0 = Kein Zugang; rote LED blinkt
-			self.Denied() 
+			self.Denied()
 		elif(event == 2):
 			# Event 2 = Unbekannt; rote LED
-			self.Unknown() 
+			self.Unknown()
+		elif(event == 3):
+			# Event 3 = Raum Unbekannt
+			self.LED.OrangeBlink()
 
 	# Prueft ob openFlag gesetzt wurde
 	def ManualOpen(self):
@@ -169,6 +174,9 @@ class SQL:
 				event = 0
 				# Event protokollieren	
 				self.Log(event, key, roomNumber, User[1])
+		elif(not Room):
+			# Event 3 = Raum unbekannt
+			event = 3
 		else:
 			# Event 2 = Unbekannt
 			event = 2
@@ -287,6 +295,16 @@ class LED:
 		self.led1 = Adafruit_NeoPixel(self.LED_1_COUNT, self.LED_1_PIN, self.LED_1_FREQ_HZ, self.LED_1_DMA, self.LED_1_INVERT, self.LED_1_BRIGHTNESS, self.LED_1_CHANNEL, self.LED_1_STRIP)
 		self.led1.begin()
 
+
+	def Start(self):
+		for i in range(8):
+			self.led1.setPixelColor(0, Color(0, 0, 64))
+			self.led1.show()
+			time.sleep(.1)
+			self.led1.setPixelColor(0, Color(0, 0, 16))
+			self.led1.show()
+			time.sleep(.1)
+
 	def Blackout(self):
 		self.led1.setPixelColor(0, Color(0,0,0))
 		self.led1.show()
@@ -309,6 +327,15 @@ class LED:
 			self.led1.show()
 			time.sleep(.1)
 			self.led1.setPixelColor(0, Color(16, 0, 0))
+			self.led1.show()
+			time.sleep(.1)
+
+	def OrangeBlink(self):
+		for i in range(128):
+			self.led1.setPixelColor(0, Color(32, 24, 0))
+			self.led1.show()
+			time.sleep(.1)
+			self.led1.setPixelColor(0, Color(12, 8, 0))
 			self.led1.show()
 			time.sleep(.1)
 
