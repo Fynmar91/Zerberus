@@ -329,7 +329,7 @@ class LED:
 			self.led1.show()
 			time.sleep(.1)
 
-def OrangeBlink(self):
+	def OrangeBlink(self):
 		for i in range(800):
 			self.led1.setPixelColor(0, Color(128, 92, 0))
 			self.led1.show()
