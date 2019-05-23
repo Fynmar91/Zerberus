@@ -33,7 +33,8 @@ def main():
 	door1 = DoorControl(led1)
 	reader1 = SimpleMFRC522.SimpleMFRC522()
 	led1.Start()
-	door1.Open(1337)
+	#Testanfrage
+	door1.Open(1337) 
 
 	while True:
 			key = False
@@ -265,6 +266,9 @@ class SQL:
 #				Klasse: LED
 # Steuert die LED
 
+# Start()
+# Input:  | Output:
+
 # Blackout()
 # Input:  | Output:
 
@@ -278,6 +282,9 @@ class SQL:
 # Input: | Output:
 
 # RotBlink() 
+# Input: | Output:
+
+# OrangeBlink() 
 # Input: | Output:
 
 #  ================================================================================
