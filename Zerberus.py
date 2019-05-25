@@ -1,14 +1,58 @@
 #!/usr/bin/env python
 
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	Zerberus v1.8
-#	Yannik Seitz 22.05.19
-#	Wird dieses Programm direkt ausgefuehrt erstellt es ein Tuer-, RC522-Reader- und LED-Objekt aus den Vorgaben der config.ini. 
-#	In einer Schleife wird versucht ein RFID-Schluessel zu finden. 
+#	Zerberus v1.9
+#	Yannik Seitz 25.05.19
+#	Wird dieses Programm direkt ausgefuehrt erstellt es ein Tuer-Objekt und fuehrt dessen Start()-Funktion in einer Endlosschleife aus. 
+#	Darin wird versucht ein RFID-Schluessel zu finden. 
 #	Wird einer gefunden, stellt das System eine Anfrage an den SQL-Server um festzustellen ob der Zungang erlaubt ist.
 #	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und nach 2 Minuten ein Neustart durchgefuehrt.
 
 #	Die Funktionen Archive und Manual sind fuer externe Anwendungen
+
+
+#            ▄▓▓███▀█▓                                          ▄, #▌
+#          ▄██████╙╙╙╙.                                        #██▄└█
+#        #█████▀╙▀▌ⁿº ╙                                       ┌████▌
+#      ╔████▀.     ╙╙    ƒ▄                                   ███████╗▄▄,
+#     ▄████'            ▄██▌                                 ▐█████████████▄
+#    ▐████             #▀╙▀▌▄,                     .      .▄▓████████████████▄
+#    ████─           .▄#████████▓▄▄▄▄▄╗╗          ▓██  ▄#████╜▄▄⌐└███████████████▓▓▓▄
+#    ████⌐          ██████████████████▀.        ╓████b ████"▄███b┌██████████████████▀
+#    ╙████         ║█████████████▄▄▄▄#▄,       #██████╗╗╗╗╗█████ ▐█████████████████`
+#     ▀████▄.      ║█████▌¡▄████████████████▀.██████████████████ ║███████████████▀
+#      ╙█████████╙.████████████████████████▀ ███████████████████,└████▀"
+#         ╙▀▀██▀ ▄█████████████████████████ █████████████████████ ▐▀
+#                ▀█████▀▀▀║███████████████ ╓█████████▄▄└▀████████
+#                 ╙   \  ▄███▀└╙▀████████▌ █████████████▓███████▄
+#                ▓ ▐▄▄███▀╙ ▄#▓▄ ╙███████ ███████████████████████▌
+#               ▐█▌,└└└ ╓#███████▓╜█████▌┌█████████████████████████
+#               ████████████████████████████████████████████████████
+#               ████████████████████████████████████████▄╙╙▀▀█████▀"
+#               ▐███████████████████████████████████████████▓m
+#               ▐█████████████████████████████████████████████
+#               ██████████████████████████████████████████████
+#              █████████▀└▀███████████████████████████████████▌
+#             j███████▀   ▄,"▀████████████████████████████████▌
+#             j██████▀    ███▄ ▀█████████████████████████████▀
+#             ▐██████     █████⌐ ▀█████████████████████████▀
+#             ║█████"    ╫████▀   "███████████████████████=
+#             █████"     ████º      ██████████▀└   ▀██████
+#            ┌████▌      ▀██▀        ███████╙       ██████
+#           ╓█████∩      ▐███▄       ██████▌        ██████
+#         ╓▓█████▀       ██████      ║█████▌        ║████▌
+#         ██████▀            ╙.      └██████        ▐████∩
+#         ╙▀▀▀▀╙                      ██████        ▐████─
+#                                     ║█████        ▐████⌐
+#                                     └█████        └████▄
+#                                      █████         █████▓,
+#                                      █████b        ████████▄
+#                                      └████▌         ▀███████─
+#                                      ▄█████▄
+#                                     ╓███████▄
+#                                     ║███████▌
+
+
 
 import time
 import subprocess
@@ -36,8 +80,8 @@ def main():
 
 # ================================================================================
 #				Klasse: DoorControl
-# Kontrolliert das Relais und die LEDs
-# Erstellt ein SQL-Objekt
+# Kontrolliert alle Funktionen einer Tuer
+# Erstellt ein SQL-, LED- und SimpleMFRC522-Objekt
 
 # Start() Hier startet das Programm. Es wird ueberprueft ob Datenbankzugang besteht.
 # Input: | Output:
