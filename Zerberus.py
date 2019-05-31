@@ -23,6 +23,12 @@ import SimpleMFRC522
 import ConfigParser
 from rpi_ws281x import *
 
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.utils import formatdate
+from email import encoders
+
 
 # ================================================================================
 #				Main
@@ -387,12 +393,27 @@ class Mail:
 		list = ''
 		for tuple in logs:
 			list = '{}\n\n{}'.format(list, tuple)
-		message = 'Subject: {}\n\n{}'.format(subject, list)
+		message = MIMEMultipart()
+		message.attach(MIMEText(subject))
+
+		part = MIMEBase('application', "octet-stream")
+		part.set_payload(open("random.xls", "rb").read())
+		encoders.encode_base64(part)
+		part.add_header('Content-Disposition', 'attachment; filename="random.xls"')
+		message.attach(part)
 
 		context = ssl.create_default_context()
 		server = smtplib.SMTP_SSL(self.smtp, self.port)
 		server.login(self.originAddress, self.password)
-		server.sendmail(self.originAddress, self.targetaddress, message)
+		server.sendmail(self.originAddress, self.targetaddress, message.as_string())
+
+
+
+
+
+
+
+
 
 	# Error per Email senden
 	def SendError(self, error, subject):
