@@ -395,8 +395,8 @@ class Mail:
 
 		book = xlwt.Workbook()
 		sheet1 = book.add_sheet('sheet1')
-
-		[str(i) for i in logs]
+		map(str, logs)
+	#	[str(i) for i in logs]
 
 		for i,e in enumerate(logs):
 			print(i)
