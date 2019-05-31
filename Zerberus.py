@@ -396,13 +396,13 @@ class Mail:
 		book = xlwt.Workbook()
 		sheet1 = book.add_sheet('sheet1')
 
-		sheet1.write(0,1,'Nr')
-		sheet1.write(1,1,'Event')
-		sheet1.write(2,1,'RFID')
-		sheet1.write(3,1,'Raum')
-		sheet1.write(4,1,'Name')
-		sheet1.write(5,1,'Datum')
-		sheet1.write(6,1,'Zeit')
+		sheet1.write(0,0,'Nr')
+		sheet1.write(1,0,'Event')
+		sheet1.write(2,0,'RFID')
+		sheet1.write(3,0,'Raum')
+		sheet1.write(4,0,'Name')
+		sheet1.write(5,0,'Datum')
+		sheet1.write(6,0,'Zeit')
 
 		for x,tuple in enumerate(logs):
 			for y,item in enumerate(tuple):
