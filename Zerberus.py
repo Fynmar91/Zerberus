@@ -29,6 +29,8 @@ from email.mime.text import MIMEText
 from email.utils import formatdate
 from email import encoders
 
+import xlwt
+from tempfile import TemporaryFile
 
 # ================================================================================
 #				Main
@@ -390,9 +392,18 @@ class Mail:
 
 	# Email senden
 	def SendArchive(self, logs, subject):
-		list = ''
-		for tuple in logs:
-			list = '{}\n\n{}'.format(list, tuple)
+
+		book = xlwt.Workbook()
+		sheet1 = book.add_sheet('sheet1')
+
+		for i,e in enumerate(logs):
+			sheet1.write(i,1,e)
+
+		name = "random.xls"
+		book.save(name)
+		book.save(TemporaryFile())
+
+
 		message = MIMEMultipart()
 		message.attach(MIMEText(subject))
 
