@@ -396,11 +396,17 @@ class Mail:
 		book = xlwt.Workbook()
 		sheet1 = book.add_sheet('sheet1')
 
+		sheet1.write(0,1,'Nr')
+		sheet1.write(1,1,'Event')
+		sheet1.write(2,1,'RFID')
+		sheet1.write(3,1,'Raum')
+		sheet1.write(4,1,'Name')
+		sheet1.write(5,1,'Datum')
+		sheet1.write(6,1,'Zeit')
+
 		for x,tuple in enumerate(logs):
 			for y,item in enumerate(tuple):
-				print(x)
-				print(y)
-				sheet1.write(x,y,str(item))
+				sheet1.write(x,y+1,str(item))
 
 		name = "random.xls"
 		book.save(name)
