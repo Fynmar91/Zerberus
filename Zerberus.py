@@ -401,7 +401,7 @@ class Mail:
 		for i,e in enumerate(logs):
 			print(i)
 			print(e)
-			sheet1.write(i,1,e)
+			#sheet1.write(i,1,e)
 
 		name = "random.xls"
 		book.save(name)
