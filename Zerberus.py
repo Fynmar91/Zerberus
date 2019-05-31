@@ -397,16 +397,16 @@ class Mail:
 		sheet1 = book.add_sheet('sheet1')
 
 		sheet1.write(0,0,'Nr')
-		sheet1.write(1,0,'Event')
-		sheet1.write(2,0,'RFID')
-		sheet1.write(3,0,'Raum')
-		sheet1.write(4,0,'Name')
-		sheet1.write(5,0,'Datum')
-		sheet1.write(6,0,'Zeit')
+		sheet1.write(0,1,'Event')
+		sheet1.write(0,2,'RFID')
+		sheet1.write(0,3,'Raum')
+		sheet1.write(0,4,'Name')
+		sheet1.write(0,5,'Datum')
+		sheet1.write(0,6,'Zeit')
 
-		for x,tuple in enumerate(logs):
-			for y,item in enumerate(tuple):
-				sheet1.write(x,y+1,str(item))
+		for y,tuple in enumerate(logs):
+			for x,item in enumerate(tuple):
+				sheet1.write(y,x+1,str(item))
 
 		name = "random.xls"
 		book.save(name)
