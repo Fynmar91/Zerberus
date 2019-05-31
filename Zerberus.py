@@ -395,13 +395,14 @@ class Mail:
 
 		book = xlwt.Workbook()
 		sheet1 = book.add_sheet('sheet1')
-		map(str, logs)
-	#	[str(i) for i in logs]
 
-		for i,e in enumerate(logs):
-			print(i)
-			print(e)
-			#sheet1.write(i,1,e)
+		map(str, logs)
+
+		for x,tuple in enumerate(logs):
+			for y,item in enumerate(tuple):
+				print(x)
+				print(y)
+				sheet1.write(x,y,item)
 
 		name = "random.xls"
 		book.save(name)
