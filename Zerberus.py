@@ -467,7 +467,7 @@ def Archive():
 		mail1 = Mail()
 		logs = sql.GetLogs()
 		mail1.SendArchive(logs, 'Logarchiv:')
-		sql1.DelLogs()
+		#sql1.DelLogs()
 
 	except Exception as error:
 		mail1 = Mail()
