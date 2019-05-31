@@ -365,8 +365,12 @@ class LED:
 # SendArchive
 # Input: Logs ;  Betreff | Output:
 
-# SendError() protokolliert ein Ereignis
+# SendErrorRestart() 
 # Input: Error ;  Betreff | Output:
+
+# SendError() 
+# Input: Error ;  Betreff | Output:
+
 # ================================================================================
 class Mail:
 	def __init__(self):
@@ -400,6 +404,15 @@ class Mail:
 		server.login(self.originAddress, self.password)
 		server.sendmail(self.originAddress, self.targetaddress, message)
 
+	# Error per Email senden
+	def SendError(self, error, subject):
+		message = 'Subject: {}\n\n{}'.format(subject, error)
+
+		context = ssl.create_default_context()
+		server = smtplib.SMTP_SSL(self.smtp, self.port)
+		server.login(self.originAddress, self.password)
+		server.sendmail(self.originAddress, self.targetaddress, message)
+
 
 # ================================================================================
 #				ausfuehren als __main__
@@ -411,7 +424,7 @@ if __name__ == '__main__':
 	except Exception as error:
 		print(error)
 		mail = Mail()
-		mail.SendError(error, 'ZERBERUS ERROR:')
+		mail.SendErrorRestart(error, 'ZERBERUS ERROR:')
 		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
 
 # ================================================================================
@@ -421,7 +434,7 @@ def Archive():
 	try:
 		sql1 = SQL()
 		mail1 = Mail()
-		logs = sql.GetLogs()
+		logs = sql1.GetLogs()
 		mail1.SendArchive(logs, 'Logarchiv:')
 		#sql1.DelLogs()
 
