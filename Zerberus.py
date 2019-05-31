@@ -392,7 +392,7 @@ class Mail:
 
 	# Email senden
 	def SendArchive(self, logs, subject):
-
+		message = 'Subject: {}\n\n{}'.format(subject, 'Logs im Anhang')
 		book = xlwt.Workbook()
 		sheet1 = book.add_sheet('sheet1')
 
@@ -414,7 +414,7 @@ class Mail:
 
 
 		message = MIMEMultipart()
-		message.attach(MIMEText('Subject: Logs'))
+		message.attach(MIMEText('1'))
 
 		part = MIMEBase('application', "octet-stream")
 		part.set_payload(open("Logs.xls", "rb").read())
