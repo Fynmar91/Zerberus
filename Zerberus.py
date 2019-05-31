@@ -406,7 +406,7 @@ class Mail:
 
 		for y,tuple in enumerate(logs):
 			for x,item in enumerate(tuple):
-				sheet1.write(y,x+1,str(item))
+				sheet1.write(y+1,x,str(item))
 
 		name = "random.xls"
 		book.save(name)
