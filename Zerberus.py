@@ -396,6 +396,10 @@ class Mail:
 		book = xlwt.Workbook()
 		sheet1 = book.add_sheet('sheet1')
 
+		list = ''
+		for tuple in logs:
+			for item in tuple:
+				item = str(item)
 
 		for i,e in enumerate(logs):
 			print(i)
