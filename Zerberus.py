@@ -408,18 +408,18 @@ class Mail:
 			for x,item in enumerate(tuple):
 				sheet1.write(y+1,x,str(item))
 
-		name = "random.xls"
+		name = "Logs.xls"
 		book.save(name)
 		book.save(TemporaryFile())
 
 
 		message = MIMEMultipart()
-		message.attach(MIMEText(subject))
+		message.attach(MIMEText('Subject: {}\n\n{}'.format(subject)))
 
 		part = MIMEBase('application', "octet-stream")
-		part.set_payload(open("random.xls", "rb").read())
+		part.set_payload(open("Logs.xls", "rb").read())
 		encoders.encode_base64(part)
-		part.add_header('Content-Disposition', 'attachment; filename="random.xls"')
+		part.add_header('Content-Disposition', 'attachment; filename="Logs.xls"')
 		message.attach(part)
 
 		context = ssl.create_default_context()
