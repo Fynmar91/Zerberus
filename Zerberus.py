@@ -413,8 +413,7 @@ class Mail:
 
 
 		message = MIMEMultipart()
-		message = 'Subject: {}\n\n{}'.format(subject, 'Logs im Anhang')
-		message.attach(MIMEText('1'))
+		message.attach(MIMEText('Subject: Logs im Anhang'))
 
 		part = MIMEBase('application', "octet-stream")
 		part.set_payload(open("Logs.xls", "rb").read())
