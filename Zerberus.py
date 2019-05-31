@@ -413,7 +413,8 @@ class Mail:
 
 
 		message = MIMEMultipart()
-		message.attach(MIMEText('Subject: Logs im Anhang'))
+		message.attach(MIMEText('Logs im Anhang'))
+		message['Subject'] = 'Zerberus-Log-Archiv'
 
 		part = MIMEBase('application', "octet-stream")
 		part.set_payload(open("Logs.xls", "rb").read())
