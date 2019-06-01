@@ -413,7 +413,6 @@ class Mail:
 		book.save(name)
 		book.save(TemporaryFile())
 
-
 		message = MIMEMultipart()
 		message.attach(MIMEText('Logs im Anhang'))
 		message['Subject'] = 'Zerberus-Log-Archiv'
@@ -429,16 +428,8 @@ class Mail:
 		server.login(self.originAddress, self.password)
 		server.sendmail(self.originAddress, self.targetaddress, message.as_string())
 
-
-
-
-
-
-
-
-
 	# Error per Email senden
-	def SendError(self, error, subject):
+	def SendErrorRestart(self, error, subject):
 		error = '{}\n\n{}'.format(error,'!!Geraet wird neu gestartet!!')
 		message = 'Subject: {}\n\n{}'.format(subject, error)
 
