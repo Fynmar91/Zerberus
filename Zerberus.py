@@ -40,7 +40,7 @@ def main():
 	door1 = DoorControl()
 
 	while True:
-		door1.Start()
+		door1.Start(False)
 
 # ================================================================================
 #				Klasse: DoorControl
@@ -69,7 +69,7 @@ def main():
 # Input:  | Output:
 # ================================================================================
 class DoorControl:
-	def __init__(self):
+	def __init__(self, manual):
 		# GPIO in BCM mode
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM) 
@@ -85,7 +85,9 @@ class DoorControl:
 		self.sql1.SetIP(self.roomNumber)
 		self.led1 = LED()
 		self.reader1 = SimpleMFRC522.SimpleMFRC522()
-		self.led1.StartUp()
+		if(manual == False):
+			self.led1.StartUp()
+		
 
 	def Start(self):
 		if (self.error == False):
@@ -485,7 +487,7 @@ def Archive():
 
 def Manual():
 	try:
-		door1 = DoorControl()
+		door1 = DoorControl(True)
 		door1.ManualUnlock()
 
 	except Exception as error:
