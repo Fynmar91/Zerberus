@@ -37,10 +37,10 @@ from tempfile import TemporaryFile
 # Objekte werden erstellt; Endlosschleife 
 # ================================================================================
 def main():
-	door1 = DoorControl()
+	door1 = DoorControl(False)
 
 	while True:
-		door1.Start(False)
+		door1.Start()
 
 # ================================================================================
 #				Klasse: DoorControl
