@@ -120,7 +120,7 @@ class DoorControl:
 	def ManualUnlock(self):
 		if(self.sql1.CheckManualAccess(self.roomNumber)):
 			# Tuer oeffnen
-			self.Granted()
+			self.Open()
 			self.led1.Blau()
 
 	# Tuer oeffnen; gruene LED
