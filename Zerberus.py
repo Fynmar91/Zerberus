@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 #	Projekt: Zerberus FS2V Zugangskontrolle
-#	Zerberus v1.8
-#	Yannik Seitz 22.05.19
-#	Wird dieses Programm direkt ausgefuehrt erstellt es ein Tuer-, RC522-Reader- und LED-Objekt aus den Vorgaben der config.ini. 
-#	In einer Schleife wird versucht ein RFID-Schluessel zu finden. 
+#	Zerberus v1.9
+#	Yannik Seitz 25.05.19
+#	Wird dieses Programm direkt ausgefuehrt erstellt es ein Tuer-Objekt und fuehrt dessen Start()-Funktion in einer Endlosschleife aus. 
+#	Darin wird versucht ein RFID-Schluessel zu finden. 
 #	Wird einer gefunden, stellt das System eine Anfrage an den SQL-Server um festzustellen ob der Zungang erlaubt ist.
 #	Sollte es zu einem Fehler kommen wird eine eMail mit einer Fehlermeldung verschickt und nach 2 Minuten ein Neustart durchgefuehrt.
 
@@ -23,55 +23,53 @@ import SimpleMFRC522
 import ConfigParser
 from rpi_ws281x import *
 
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.utils import formatdate
+from email import encoders
+
+import xlwt
+from tempfile import TemporaryFile
 
 # ================================================================================
 #				Main
 # Objekte werden erstellt; Endlosschleife 
 # ================================================================================
 def main():
-	led1 = LED()
-	door1 = DoorControl(led1)
-	reader1 = SimpleMFRC522.SimpleMFRC522()
-	led1.Start()
-	#Testanfrage
-	door1.Open(1337) 
+	door1 = DoorControl(False)
 
 	while True:
-			key = False
-			led1.Blau()
-			# RFID-Karte einlesen
-			key = reader1.read_id_Cont()
-			door1.Open(key)
+		door1.Start()
 
 # ================================================================================
 #				Klasse: DoorControl
-# Kontrolliert das Relais und die LEDs
-# Erstellt ein SQL-Objekt
+# Kontrolliert alle Funktionen einer Tuer
+# Erstellt ein SQL-, LED- und SimpleMFRC522-Objekt
 
-# Open() ueberprueft ob der mitgegeben Schluessel zugangsberechtigt ist
+# Start() Hier startet das Programm. Es wird ueberprueft ob Datenbankzugang besteht.
+# Input: | Output:
+
+# Unlock() Versucht die Tuer zu oeffnen mit dem mitgegeben Schluessel zu oeffnen. 
 # Input: RFID-ID | Output:
 
-# ManualOpen() oeffnet die Tuer sollte eine Aufforderung in der Datenbank vorhanden sein
+# ManualUnlock() Oeffnet die Tuer sollte eine Aufforderung in der Datenbank vorhanden sein
+# Input: | Output:
+
+# Open() Schaltet das Relais ueber GPIO um die Tuer zu oeffnen
+# Input: | Output:
+
+# Unknown() Laesst die rote LED kurz leuchten
 # Input:  | Output:
 
-# Granted() schaltet das Relais ueber GPIO um die Tuer zu oeffnen
+# Denied() Laesst die rote LED blinken
 # Input:  | Output:
 
-# Unknown() laesst die rote LED kurz leuchten
-# Input:  | Output:
-
-# Denied() laesst die rote LED blinken
+# RoomMissing() Schaltet die oragene LED ein 
 # Input:  | Output:
 # ================================================================================
 class DoorControl:
-	def __init__(self, led1):
-		config = ConfigParser.RawConfigParser()
-		config.read('/home/pi/Zerberus/config.ini')
-		self.roomNumber = config.get('ROOM', 'Raumnummer')
-		self.sql = SQL()
-		self.sql.SetIP(self.roomNumber)
-		self.LED = led1
-
+	def __init__(self, manual):
 		# GPIO in BCM mode
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM) 
@@ -79,13 +77,36 @@ class DoorControl:
 		GPIO.setup(18,GPIO.OUT) 
 		# Relais schliesst bei low
 		GPIO.output(18,GPIO.HIGH) 
+		config = ConfigParser.RawConfigParser()
+		config.read('/home/pi/Zerberus/config.ini')
+		self.roomNumber = config.get('ROOM', 'Raumnummer')
+		self.error = True
+		self.sql1 = SQL()
+		self.sql1.SetIP(self.roomNumber)
+		self.led1 = LED()
+		self.reader1 = SimpleMFRC522.SimpleMFRC522()
+		if(manual == False):
+			self.led1.StartUp()
+		
 
-	def Open(self, key):
+	def Start(self):
+		if (self.error == False):
+			self.led1.Blau()
+			key = False
+			key = self.reader1.read_id_Cont()
+			self.Unlock(key)
+		else:
+			while(self.error == True):
+				self.Unlock(1337)
+				time.sleep(4)
+
+	def Unlock(self, key):
+		self.error = False
 		# Zungangsberechtigung kontrollieren
-		event = self.sql.CheckPermission(key, self.roomNumber) 
+		event = self.sql1.CheckPermission(key, self.roomNumber) 
 		if(event == 1):
 			# Event 1 = Zugang erlaubt; Tuer oeffnen
-			self.Granted()
+			self.Open()
 		elif(event == 0):
 			# Event 0 = Kein Zugang; rote LED blinkt
 			self.Denied()
@@ -94,54 +115,61 @@ class DoorControl:
 			self.Unknown()
 		elif(event == 3):
 			# Event 3 = Raum Unbekannt
-			self.LED.OrangeBlink()
+			self.RoomMissing()
+			self.error = True
 
 	# Prueft ob openFlag gesetzt wurde
-	def ManualOpen(self):
-		if(self.sql.CheckManualAccess(self.roomNumber)):
+	def ManualUnlock(self):
+		if(self.sql1.CheckManualAccess(self.roomNumber)):
 			# Tuer oeffnen
-			self.Granted()
+			self.Open()
+			self.led1.Blau()
 
 	# Tuer oeffnen; gruene LED
-	def Granted(self):
-		self.LED.Gruen()
+	def Open(self):
+		self.led1.Gruen()
 		GPIO.output(18,GPIO.LOW)
 		time.sleep(4)
 		GPIO.output(18,GPIO.HIGH)
 
 	# Unbekannt; rote LED
 	def Unknown(self):
-		self.LED.Rot()
-		time.sleep(1)
-
+		self.led1.Rot()
 
 	# Kein Zugang; rote LED blinkt
 	def Denied(self):
-		self.LED.RotBlink()
+		self.led1.RotBlink()
+
+	# Raum nicht gefunden; orangene LED
+	def RoomMissing(self):
+		self.led1.Orange()
 
 # ================================================================================
 #				Klasse: SQL
 # Fuehrt SQL-Abfragen durch, schreibt Ereignissprotokolle und setzt die openFalg zurueck
 
-# CheckPermission() prueft ob ein RFID-Schluessel zugriff zu einem Raum hat
-# Input: RFID-ID ; Raumnummer | Output: Ereignis (Event 1 = Zugang erlaubt ; Event 0 = Zugang verweigert ; Event 2 = Unbekannt)
+# CheckPermission() Prueft ob ein RFID-Schluessel zugriff zu einem Raum hat
+# Input: RFID-ID ; Raumnummer | Output: Ereignis (Event 1 = Zugang erlaubt ; Event 0 = Zugang verweigert ; Event 2 = Unbekannt ; Event 3 = Raum unbekannt)
 
-# Log() protokolliert ein Ereignis
-# Input:  | Output:
+# Log() Protokolliert ein Ereignis
+# Input: event, key, roomNumber, name  | Output:
 
-# Query() stellt eine Abfrage an den SQL-Server
+# Query() Stellt eine Abfrage an den SQL-Server
 # Input:  | Output: Ergebnis der Abfrage
 
-# DelLogs() loescht alle Logs
+# GetLogs() Holt alle Logs
+# Input:  | Output: Logs
+
+# DelLogs() Loescht alle Logs
 # Input:  | Output:
 
 # GetIP() Findet die IP-Adresse des Netzwerkadapters
-# Input:  | Output:
+# Input:  | Output: IP
 
 # SetIP() Schreibt die IP-Addresse in die SQL-Datenbank
 # Input:  | Output:
 
-# CheckManualAccess() prueft ob ein Raum durch das Interface geoeffnet werden soll
+# CheckManualAccess() Prueft ob ein Raum durch das Interface geoeffnet werden soll
 # Input:  | Output: True/False
 
 # ResetOpenFlag() Setz die openFlag auf 0
@@ -181,8 +209,7 @@ class SQL:
 		else:
 			# Event 2 = Unbekannt
 			event = 2
-			self.Log(event, key, roomNumber, 'UNBEKANNT')
-	
+			self.Log(event, key, roomNumber, 'UNBEKANNT')	
 		return event
 
 	# Event protokollieren
@@ -284,7 +311,7 @@ class SQL:
 # RotBlink() 
 # Input: | Output:
 
-# OrangeBlink() 
+# Orange() 
 # Input: | Output:
 
 #  ================================================================================
@@ -302,8 +329,7 @@ class LED:
 		self.led1 = Adafruit_NeoPixel(self.LED_1_COUNT, self.LED_1_PIN, self.LED_1_FREQ_HZ, self.LED_1_DMA, self.LED_1_INVERT, self.LED_1_BRIGHTNESS, self.LED_1_CHANNEL, self.LED_1_STRIP)
 		self.led1.begin()
 
-
-	def Start(self):
+	def StartUp(self):
 		for i in range(8):
 			self.led1.setPixelColor(0, Color(0, 0, 64))
 			self.led1.show()
@@ -327,6 +353,7 @@ class LED:
 	def Rot(self):
 		self.led1.setPixelColor(0, Color(128, 0, 0))
 		self.led1.show()
+		time.sleep(1)
 
 	def RotBlink(self):
 		for i in range(8):
@@ -337,14 +364,9 @@ class LED:
 			self.led1.show()
 			time.sleep(.1)
 
-	def OrangeBlink(self):
-		for i in range(128):
-			self.led1.setPixelColor(0, Color(32, 24, 0))
-			self.led1.show()
-			time.sleep(.1)
-			self.led1.setPixelColor(0, Color(12, 8, 0))
-			self.led1.show()
-			time.sleep(.1)
+	def Orange(self):
+		self.led1.setPixelColor(0, Color(32, 24, 0))
+
 
 # ================================================================================
 #				Klasse: Mail
@@ -353,8 +375,12 @@ class LED:
 # SendArchive
 # Input: Logs ;  Betreff | Output:
 
-# SendError() protokolliert ein Ereignis
+# SendErrorRestart() 
 # Input: Error ;  Betreff | Output:
+
+# SendError() 
+# Input: Error ;  Betreff | Output:
+
 # ================================================================================
 class Mail:
 	def __init__(self):
@@ -368,10 +394,44 @@ class Mail:
 
 	# Email senden
 	def SendArchive(self, logs, subject):
-		list = ''
-		for tuple in logs:
-			list = '{}\n\n{}'.format(list, tuple)
-		message = 'Subject: {}\n\n{}'.format(subject, list)
+		book = xlwt.Workbook()
+		sheet1 = book.add_sheet('sheet1')
+
+		sheet1.write(0,0,'Nr')
+		sheet1.write(0,1,'Event')
+		sheet1.write(0,2,'RFID')
+		sheet1.write(0,3,'Raum')
+		sheet1.write(0,4,'Name')
+		sheet1.write(0,5,'Datum')
+		sheet1.write(0,6,'Zeit')
+
+		for y,tuple in enumerate(logs):
+			for x,item in enumerate(tuple):
+				sheet1.write(y+1,x,str(item))
+
+		name = "Logs.xls"
+		book.save(name)
+		book.save(TemporaryFile())
+
+		message = MIMEMultipart()
+		message.attach(MIMEText('Logs im Anhang'))
+		message['Subject'] = 'Zerberus-Log-Archiv'
+
+		part = MIMEBase('application', "octet-stream")
+		part.set_payload(open("Logs.xls", "rb").read())
+		encoders.encode_base64(part)
+		part.add_header('Content-Disposition', 'attachment; filename="Logs.xls"')
+		message.attach(part)
+
+		context = ssl.create_default_context()
+		server = smtplib.SMTP_SSL(self.smtp, self.port)
+		server.login(self.originAddress, self.password)
+		server.sendmail(self.originAddress, self.targetaddress, message.as_string())
+
+	# Error per Email senden
+	def SendErrorRestart(self, error, subject):
+		error = '{}\n\n{}'.format(error,'!!Geraet wird neu gestartet!!')
+		message = 'Subject: {}\n\n{}'.format(subject, error)
 
 		context = ssl.create_default_context()
 		server = smtplib.SMTP_SSL(self.smtp, self.port)
@@ -380,7 +440,6 @@ class Mail:
 
 	# Error per Email senden
 	def SendError(self, error, subject):
-		error = '{}\n\n{}'.format(error,'!!Geraet wird neu gestartet!!')
 		message = 'Subject: {}\n\n{}'.format(subject, error)
 
 		context = ssl.create_default_context()
@@ -399,7 +458,7 @@ if __name__ == '__main__':
 	except Exception as error:
 		print(error)
 		mail = Mail()
-		mail.SendError(error, 'ZERBERUS ERROR:')
+		mail.SendErrorRestart(error, 'ZERBERUS ERROR:')
 		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
 
 # ================================================================================
@@ -407,18 +466,21 @@ if __name__ == '__main__':
 # ================================================================================
 def Archive():
 	try:
-		sql = SQL()
-		mail = Mail()
-		logs = sql.GetLogs()
-		mail.SendArchive(logs, 'Logarchiv:')
-		sql.DelLogs()
+		sql1 = SQL()
+		mail1 = Mail()
+		logs = sql1.GetLogs()
+		mail1.SendArchive(logs, 'Logarchiv:')
+		#sql1.DelLogs()
 
 	except Exception as error:
-		mail = Mail()
-		mail.SendError(error, 'ARCHIVE ERROR:')
+		mail1 = Mail()
+		mail1.SendError(error, 'ARCHIVE ERROR:')
 
 def Manual():
-	led1 = LED()
-	door1 = DoorControl(led1)
-	door1.ManualOpen()
-	led1.Blau() 
+	try:
+		door1 = DoorControl(True)
+		door1.ManualUnlock()
+
+	except Exception as error:
+		mail1 = Mail()
+		mail1.SendError(error, 'ARCHIVE ERROR:')
