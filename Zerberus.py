@@ -207,9 +207,13 @@ class SQL:
 			# Event 3 = Raum unbekannt
 			event = 3
 		else:
-			# Event 2 = Unbekannt
-			event = 2
-			self.Log(event, key, roomNumber, 'UNBEKANNT')	
+			if(key == 1337):
+				event = 4
+				self.Log(event, key, roomNumber, 'DATABASE CHECK')	
+			else:
+				# Event 2 = Unbekannt
+				event = 2
+				self.Log(event, key, roomNumber, 'UNBEKANNT')	
 		return event
 
 	# Event protokollieren
