@@ -208,8 +208,8 @@ class SQL:
 			event = 3
 		else:
 			if(key == 1337):
+				# Datenbank checken
 				event = 4
-				self.Log(event, key, roomNumber, 'DATABASE CHECK')	
 			else:
 				# Event 2 = Unbekannt
 				event = 2
