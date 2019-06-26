@@ -466,7 +466,7 @@ if __name__ == '__main__':
 		#mail = Mail()
 		#mail.SendErrorRestart(error, 'ZERBERUS ERROR:')
 		logging.basicConfig(filename='/home/pi/Zerberus/error.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
-		logger=logging.getLogger(__name__)
+		logger = logging.getLogger(__name__)
 		logger.error(error)
 
 # ================================================================================
@@ -486,7 +486,7 @@ def Archive():
 		#mail1 = Mail()
 		#mail1.SendError(error, 'ARCHIVE ERROR:')
 		logging.basicConfig(filename='/home/pi/Zerberus/error.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
-		logger=logging.getLogger(__name__)
+		logger = logging.getLogger(__name__)
 		logger.error(error)
 
 def Manual():
@@ -500,5 +500,5 @@ def Manual():
 		#mail1 = Mail()
 		#mail1.SendError(error, 'ARCHIVE ERROR:')
 		logging.basicConfig(filename='/home/pi/Zerberus/error.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
-		logger=logging.getLogger(__name__)
+		logger = logging.getLogger(__name__)
 		logger.error(error)
