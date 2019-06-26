@@ -47,7 +47,6 @@ if __name__ == '__main__':
 
 	except Exception as error:
 		print(error)
-		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
 		logging.basicConfig(filename='/home/pi/Zerberus/error.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
 		logger = logging.getLogger(__name__)
 		logger.error(error)
