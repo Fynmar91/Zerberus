@@ -22,6 +22,7 @@ import MySQLdb
 import SimpleMFRC522
 import ConfigParser
 from rpi_ws281x import *
+import logging
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -461,9 +462,12 @@ if __name__ == '__main__':
 
 	except Exception as error:
 		print(error)
-		mail = Mail()
-		mail.SendErrorRestart(error, 'ZERBERUS ERROR:')
 		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
+		#mail = Mail()
+		#mail.SendErrorRestart(error, 'ZERBERUS ERROR:')
+		logging.basicConfig(filename='/home/pi/Zerberus/error.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
+		logger=logging.getLogger(__name__)
+		logger.error(error)
 
 # ================================================================================
 #				Funktionen fuer externe Anwendungen
@@ -471,14 +475,19 @@ if __name__ == '__main__':
 def Archive():
 	try:
 		sql1 = SQL()
-		mail1 = Mail()
-		logs = sql1.GetLogs()
-		mail1.SendArchive(logs, 'Logarchiv:')
+		#mail1 = Mail()
+		#logs = sql1.GetLogs()
+		#mail1.SendArchive(logs, 'Logarchiv:')
 		sql1.DelLogs()
 
 	except Exception as error:
-		mail1 = Mail()
-		mail1.SendError(error, 'ARCHIVE ERROR:')
+		print(error)
+		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
+		#mail1 = Mail()
+		#mail1.SendError(error, 'ARCHIVE ERROR:')
+		logging.basicConfig(filename='/home/pi/Zerberus/error.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
+		logger=logging.getLogger(__name__)
+		logger.error(error)
 
 def Manual():
 	try:
@@ -486,5 +495,10 @@ def Manual():
 		door1.ManualUnlock()
 
 	except Exception as error:
-		mail1 = Mail()
-		mail1.SendError(error, 'ARCHIVE ERROR:')
+		print(error)
+		subprocess.call('/home/pi/Zerberus/Restart', shell=True)
+		#mail1 = Mail()
+		#mail1.SendError(error, 'ARCHIVE ERROR:')
+		logging.basicConfig(filename='/home/pi/Zerberus/error.log', level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
+		logger=logging.getLogger(__name__)
+		logger.error(error)
