@@ -9,7 +9,6 @@ import fcntl
 import struct
 import Zerberus
 import logging
-import subprocess
 
 
 
