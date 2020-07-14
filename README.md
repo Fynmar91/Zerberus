@@ -7,8 +7,8 @@
 ![alt text](https://raw.githubusercontent.com/Fynmar91/Zerberus/master/Images/3.png)
 
 
-![alt text](https://raw.githubusercontent.com/Fynmar91/Zerberus/master/Images/4.png)
-![alt text](https://raw.githubusercontent.com/Fynmar91/Zerberus/master/Images/5.png)
-![alt text](https://raw.githubusercontent.com/Fynmar91/Zerberus/master/Images/6.png)
-![alt text](https://raw.githubusercontent.com/Fynmar91/Zerberus/master/Images/7.png)
-![alt text](https://raw.githubusercontent.com/Fynmar91/Zerberus/master/Images/8.png)
+![alt text](https://raw.githubusercontent.com/Fynmar91/Zerberus/master/Images/4.jpg)
+![alt text](https://raw.githubusercontent.com/Fynmar91/Zerberus/master/Images/5.jpg)
+![alt text](https://raw.githubusercontent.com/Fynmar91/Zerberus/master/Images/6.jpg)
+![alt text](https://raw.githubusercontent.com/Fynmar91/Zerberus/master/Images/7.jpg)
+![alt text](https://raw.githubusercontent.com/Fynmar91/Zerberus/master/Images/8.jpg)
