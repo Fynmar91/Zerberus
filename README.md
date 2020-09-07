@@ -1,6 +1,6 @@
 # Zerberus
 
-# Projekt: Zerberus FS2V Zugangskontrolle
+# Techniker-Projekt: Zerberus FS2V Zugangskontrolle
 
 ![alt text](https://raw.githubusercontent.com/Fynmar91/Zerberus/master/Images/1.png)
 ![alt text](https://raw.githubusercontent.com/Fynmar91/Zerberus/master/Images/2.png)
